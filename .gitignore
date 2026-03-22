@@ -1,0 +1,5 @@
+.claude/
+tasks/
+*.output
+.DS_Store
+scripts/kentei-data/

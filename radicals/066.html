@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="../manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#8b7ff5">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>攴 (knock) — Radical #66</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--bg:#f5f5f7;--surface:#fff;--surface2:#eeeef2;--accent:#5a4ff5;--accent-dim:#7a72f7;--correct:#1a9f55;--wrong:#d93025;--text:#1d1d1f;--text-dim:#6e6e80;--border:#d8d8e0;--gold:#d4a017}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:18px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+nav .logo{font-size:1.5rem;font-weight:700;letter-spacing:-0.5px}nav .logo span{color:var(--accent)}
+nav .nav-links{display:flex;gap:6px}
+nav .nav-links button{background:none;border:1px solid transparent;color:var(--text-dim);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:1rem;transition:all .2s}
+nav .nav-links button:hover,nav .nav-links button.active{color:var(--text);background:var(--surface2);border-color:var(--border)}
+nav .nav-links button.active{border-color:var(--accent);color:var(--accent)}
+.stats-bar{display:flex;gap:24px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);font-size:.95rem;color:var(--text-dim);flex-wrap:wrap}
+.stat-item{display:flex;align-items:center;gap:6px}.stat-item .num{color:var(--text);font-weight:600;font-size:1.15rem}
+.stat-item .num.green{color:var(--correct)}.stat-item .num.red{color:var(--wrong)}.stat-item .num.gold{color:var(--gold)}
+main{max-width:1400px;margin:0 auto;padding:32px 40px}
+#quiz-screen{display:block}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;font-size:.8rem;color:var(--text-dim)}
+.quiz-mode-label{background:var(--surface2);padding:4px 12px;border-radius:20px;border:1px solid var(--border)}
+.quiz-progress-text{font-variant-numeric:tabular-nums}
+.progress-bar{width:100%;height:4px;background:var(--surface2);border-radius:2px;margin-bottom:32px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease}
+.quiz-body{display:flex;gap:32px;align-items:stretch;margin-bottom:24px;min-height:420px}
+.question-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px 40px;text-align:center;flex:1.2;display:flex;flex-direction:column;justify-content:center;min-height:380px}
+.question-prompt{font-size:1.15rem;color:var(--text-dim);margin-bottom:20px}
+.question-kanji{font-size:8rem;font-weight:300;line-height:1.1;margin-bottom:12px;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif}
+.question-context{font-size:3rem;color:var(--text);margin-bottom:12px;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif}
+.question-sub{font-size:1.4rem;color:var(--accent);margin-top:12px;font-weight:600}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:0.8;align-content:center}
+.option-btn{background:var(--surface);border:2px solid var(--border);color:var(--text);padding:28px 20px;border-radius:14px;font-size:2rem;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif;cursor:pointer;transition:all .2s;position:relative;min-height:85px;display:flex;align-items:center;justify-content:center}
+.option-btn:hover:not(.disabled){border-color:var(--accent);background:var(--surface2);transform:translateY(-1px)}
+.option-btn.correct{border-color:var(--correct);background:rgba(26,159,85,.1)}
+.option-btn.wrong{border-color:var(--wrong);background:rgba(217,48,37,.1)}
+.option-btn.disabled{pointer-events:none}
+.option-btn .key-hint{position:absolute;top:6px;left:10px;font-size:.65rem;color:var(--text-dim);opacity:.5}
+.feedback-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;display:none}
+.feedback-card.show{display:block}.feedback-card.correct-fb{border-left:4px solid var(--correct)}.feedback-card.wrong-fb{border-left:4px solid var(--wrong)}
+.feedback-header{font-weight:600;margin-bottom:12px;font-size:1.15rem}
+.feedback-header.correct-text{color:var(--correct)}.feedback-header.wrong-text{color:var(--wrong)}
+.feedback-detail{font-size:1.05rem;line-height:1.7;color:var(--text-dim)}.feedback-detail strong{color:var(--text)}
+.feedback-detail .big{font-size:3rem;display:inline-block;margin:0 8px;vertical-align:middle;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif}
+.next-btn{width:100%;background:var(--accent);border:none;color:#fff;padding:18px;border-radius:12px;font-size:1.15rem;cursor:pointer;transition:all .2s;display:none}
+.next-btn:hover{background:#5a52e0}.next-btn.show{display:block}
+#review-screen{display:none}.review-header{margin-bottom:24px}.review-header h2{font-size:1.3rem;margin-bottom:4px}.review-header p{color:var(--text-dim);font-size:.85rem}
+.review-accuracy-bar{margin:16px 0 20px}.review-accuracy-label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px}.review-accuracy-label span:first-child{color:var(--text);font-weight:600}.review-accuracy-label span:last-child{color:var(--text-dim)}.review-accuracy-track{height:10px;background:var(--surface);border-radius:5px;overflow:hidden;border:1px solid var(--border)}.review-accuracy-fill{height:100%;border-radius:5px;transition:width .4s ease}.review-status-counts{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;font-size:.8rem}.review-status-counts span{display:flex;align-items:center;gap:4px}.review-status-counts .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.review-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.review-filters button{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:20px;font-size:.8rem;cursor:pointer;transition:all .2s}
+.review-filters button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.kanji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.kanji-tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.kanji-tile:hover{border-color:var(--accent);transform:translateY(-2px)}
+.kanji-tile .tile-kanji{font-size:2.5rem;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif}
+.kanji-tile .tile-reading{font-size:.8rem;color:var(--text-dim);margin-top:4px}
+.kanji-tile .tile-kanji.unseen{color:#c0c0cc}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;justify-content:center;align-items:center;padding:24px}
+.modal-overlay.show{display:flex}
+.modal-content{background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:480px;width:100%;padding:32px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text-dim);font-size:1.5rem;cursor:pointer}
+.modal-kanji{font-size:5rem;text-align:center;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif;margin-bottom:16px}
+.modal-info{font-size:.9rem;line-height:1.8}.modal-info dt{color:var(--text-dim);font-size:.75rem;text-transform:uppercase;letter-spacing:1px;margin-top:12px}.modal-info dd{color:var(--text)}
+.modal-stats{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;font-size:.8rem}
+.modal-stats .ms-num{font-size:1.3rem;font-weight:700}
+#results-screen{display:none;text-align:center;padding-top:40px}
+.results-score{font-size:4rem;font-weight:700;margin:16px 0}
+.results-score.great{color:var(--correct)}.results-score.ok{color:var(--gold)}.results-score.bad{color:var(--wrong)}
+.results-subtitle{color:var(--text-dim);font-size:.95rem;margin-bottom:32px}
+.results-mistakes{text-align:left;margin-bottom:32px}
+.results-mistakes h3{font-size:.9rem;color:var(--text-dim);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.mistake-item{display:flex;align-items:center;gap:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.mistake-item .mi-kanji{font-size:2rem;font-family:'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif;min-width:50px;text-align:center}
+.mistake-item .mi-info{font-size:.85rem;color:var(--text-dim)}.mistake-item .mi-info strong{color:var(--text)}
+.restart-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.restart-btns button{padding:14px 28px;border-radius:12px;font-size:.95rem;cursor:pointer;border:2px solid var(--border);background:var(--surface);color:var(--text);transition:all .2s}
+.restart-btns button:hover{border-color:var(--accent)}
+.restart-btns button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.restart-btns button.primary:hover{background:#5a52e0}
+#settings-screen{display:none}.settings-group{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.settings-group h3{font-size:.95rem;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.setting-row label{font-size:.9rem}
+.setting-row select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:.85rem}
+.danger-btn{background:rgba(217,48,37,.1);border:1px solid var(--wrong);color:var(--wrong);padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.85rem;margin-top:8px}
+.danger-btn:hover{background:rgba(217,48,37,.2)}
+.shortcuts-hint{text-align:center;font-size:.7rem;color:var(--text-dim);opacity:.5;margin-top:12px}
+@media(max-width:900px){.quiz-body{flex-direction:column;min-height:auto}.question-card{min-height:auto;padding:28px 20px}.question-kanji{font-size:6rem}.question-context{font-size:2.5rem}.options{grid-template-columns:1fr 1fr}.option-btn{font-size:1.4rem;padding:16px 12px;min-height:auto}.kanji-grid{grid-template-columns:repeat(auto-fill,minmax(70px,1fr))}nav{padding:12px 16px}main{padding:20px 16px}}
+</style>
+</head>
+<body>
+<nav><div class="logo">攴 <span>knock</span></div><div class="nav-links"><button class="active" onclick="showScreen('quiz')">Quiz</button><button onclick="showScreen('review')">Review</button><button onclick="window.location.href='../dictionary.html'">Dictionary</button><button onclick="showScreen('settings')">Settings</button><button onclick="window.location.href='all.html'">← Radicals</button><button onclick="window.location.href='../index.html'">Menu</button></div></nav>
+<div class="stats-bar"><div class="stat-item">Seen: <span class="num" id="stat-seen">0</span>/12</div><div class="stat-item">Mastered: <span class="num green" id="stat-mastered">0</span></div><div class="stat-item">Struggling: <span class="num red" id="stat-struggling">0</span></div><div class="stat-item">Streak: <span class="num gold" id="stat-streak">0</span></div><div class="stat-item">Session: <span class="num" id="stat-session-correct">0</span>/<span class="num" id="stat-session-total">0</span></div></div>
+<main>
+<div id="quiz-screen"><div class="quiz-meta"><span class="quiz-mode-label" id="quiz-mode-label">Quiz</span><span class="quiz-progress-text" id="quiz-progress-text">1/20</span></div><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div><div class="quiz-body"><div class="question-card"><div class="question-prompt" id="question-prompt"></div><div class="question-kanji" id="question-kanji"></div><div class="question-context" id="question-context"></div><div class="question-sub" id="question-sub"></div></div><div class="options" id="options"></div></div><div class="feedback-card" id="feedback-card"><div class="feedback-header" id="feedback-header"></div><div class="feedback-detail" id="feedback-detail"></div></div><button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button><div class="shortcuts-hint">Keys: 1-4 answer · Enter/Space next</div></div>
+<div id="review-screen"><div class="review-header"><h2>攴 (knock) — Radical #66</h2><p>Click any kanji to see details</p></div><div class="review-accuracy-bar"><div class="review-accuracy-label"><span id="review-mastery-pct">0 / 12 Mastered</span><span id="review-mastery-detail"></span></div><div class="review-accuracy-track"><div class="review-accuracy-fill" id="review-mastery-fill" style="width:0%"></div></div></div><div class="review-accuracy-bar" style="margin-top:8px"><div class="review-accuracy-label"><span id="review-acc-pct">0%</span><span id="review-acc-detail"></span></div><div class="review-accuracy-track"><div class="review-accuracy-fill" id="review-acc-fill" style="width:0%"></div></div></div><div class="review-status-counts" id="review-status-counts"></div><div style="margin-bottom:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button onclick="startQuiz('verify')" style="background:var(--accent);border:none;color:#fff;padding:10px 24px;border-radius:10px;font-size:.9rem;cursor:pointer">🔄 Verify All Seen Kanji</button><input type="text" id="review-search" placeholder="Search kanji, reading, or meaning..." oninput="searchReview(this.value)" style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:1rem;outline:none"></div><div class="review-filters"><button class="active" onclick="filterReview('all',this)">All (12)</button><button onclick="filterReview('unseen',this)">Unseen</button><button onclick="filterReview('learning',this)">Learning</button><button onclick="filterReview('struggling',this)">Struggling</button><button onclick="filterReview('mastered',this)">Mastered</button></div><div class="kanji-grid" id="kanji-grid"></div></div>
+<div id="results-screen"><h2>Session Complete!</h2><div class="results-score" id="results-score">0%</div><div class="results-subtitle" id="results-subtitle"></div><div class="results-mistakes" id="results-mistakes"></div><div id="results-covered" style="text-align:left;margin-top:24px"></div><div class="restart-btns"><button id="retry-mistakes-btn" onclick="startQuiz('mistakes')">Retry Mistakes</button><button onclick="startQuiz('weak')">Practice Weak</button><button class="primary" onclick="startQuiz('mixed')">New Round</button></div></div>
+<div id="settings-screen"><div class="settings-group"><h3>Appearance</h3><div class="setting-row"><label>Font Size</label><div style="display:flex;align-items:center;gap:12px"><button onclick="adjustFontSize(-1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:8px;font-size:1.1rem;cursor:pointer">A-</button><span id="font-size-label" style="font-size:1.1rem;font-weight:600;min-width:50px;text-align:center">100%</span><button onclick="adjustFontSize(1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:8px;font-size:1.1rem;cursor:pointer">A+</button></div></div></div><div class="settings-group"><h3>Quiz Settings</h3><div class="setting-row"><label>Question types</label><select id="setting-mode" onchange="saveSetting('mode',this.value)"><option value="mixed" selected>Mixed</option><option value="rad2meaning">Radical → Meaning</option><option value="kanji2rad">Kanji → Radical</option><option value="meaning2kanji">Meaning → Kanji</option></select></div><div class="setting-row"><label>Prioritize weak</label><select id="setting-priority" onchange="saveSetting('priority',this.value)"><option value="yes" selected>Yes</option><option value="no">No</option></select></div></div><div class="settings-group"><h3>Data</h3><p style="font-size:.85rem;color:var(--text-dim);margin-bottom:12px">Progress saved in localStorage.</p><button class="danger-btn" onclick="if(confirm('Reset all progress?')){localStorage.removeItem('rad_66');location.reload();}">Reset All Progress</button></div></div>
+</main>
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal-content"><button class="modal-close" onclick="closeModal()">×</button><div class="modal-kanji" id="modal-kanji"></div><dl class="modal-info" id="modal-info"></dl><div class="modal-stats" id="modal-stats"></div></div></div>
+<script>
+const RADS=[{num:66,rad:"攴",v:["攵"],jp:"ぼくづくり",m:"knock",k:[{"c":"教","m":"teach"},{"c":"数","m":"number"},{"c":"整","m":"organize"},{"c":"政","m":"politics"},{"c":"放","m":"set free"},{"c":"敵","m":"enemy"},{"c":"救","m":"salvation"},{"c":"散","m":"scatter"},{"c":"敗","m":"failure"},{"c":"故","m":"happenstance"},{"c":"敬","m":"awe"},{"c":"改","m":"reformation"}]}];
+const ALL_KANJI=RADS.flatMap(r=>r.k);
+const TOTAL=12;
+const ALL_MEANINGS=["one","negative","above","below","generation","length","three","ten thousand","bestow","both","seven","row","street","hill","help","third class","moreover","ox","in/middle","spit/skewer","lord","round","rust-colored","bowl","ride","of","long time","destitution","from","riot","nine","drought","the latter","milk","tortoise","beg","to be","matter","complete","beforehand","contend","two","five","mutually","well","Asia","span","mingle","deceased","capital","pavilion","sign of hog","enjoy","clear","also","pass through","person","what","now","meeting","body","make","use","faith","substitute","attend","other","adhere","responsibility","transmit","affair","rest","submit","protect","dwell","discipline","example","borrow","convenience","price","work","lower","rank","becoming","overthrow","tenderness","beginning","before","light","newborn","elder brother","allot","excuse","portent","overcome","enter","whole","inside","eight","six","public","together","soldier","tool","code","part","circle","volume","again","copy","superfluous","crown","army","dark","winter","cool","frozen","uncanny","quasi","congeal","cold","next","melting","desk","mediocre","kite","wind","exit","villain","concave","convex","box","sword","cut","first","separate","profit","judgment","system","publish","plane","proportion","engrave","rule","vice-","drama","punish","genesis","power","move","toil","merit","exertion","win","forces","task","diligence","add","recruit","courage","inferiority","achievement","wrap","hook","smell","not","monme","change","north","spoon","ward","doctor","artisan","hide","equal","ten","thousand","half","south","graduate","cooperate","noon","eminent","measuring box","splendor","fortune-telling","divination","stamp","instant","instead","egg","dangerous","meadow","thick","stern","pressure","unlucky","private","gone","pedestal","participate","prefecture","ability","friend","anti-","take","receive","income","pair","uncle","reach","confer","mouth","right","name","old","number","fit","same","flavor","goods","question","member","call","revelation","life","circumference","harmony","chant","utensil","suck","blow","country","times","map","park","harden","surround","group","cause","quandary","sphere","soil","ground","place","exist","slope","mold","castle","fundamentals","public hall","salt","boundary","increase","wall","level","bury","range","grave","paint","strict","clod","gentleman","voice","sell","robust","one (formal)","each","article","summer","duplicate","evening","outside","night","many","dream","big","heaven","plump","husband","center","strange","interior","encourage","play music","pledge","stirred up","Nara","woman","fond","begin","elder sister","younger sister","wife","lady","figure","daughter","marry","dislike","pregnancy","likeness","exquisite","disturb","committee","intimidate","marriage","glad","surname","child","character","study","seasons","filial piety","grandchild","orphan","house","relax","room","Shinto shrine","guest","reality","determine","perfect","bureaucrat","guard","eaves","treasure","proclaim","inn","secrecy","draw near","wealth","guess","lie down","inch","temple","vis-a-vis","seal","specialty","shoot","leader","guidance","revered","inquire","little","few","hit","esteem","especially","settle","deliver","roof","unfold","bureau","reside","belong","stratum","tail","urine","yield","barracks","mountain","beach","island","boulder","summit","crumble","storm","promontory","peak","mountain pass","gorge","river","state","patrol","nest","disaster","craft","left","distinction","adroit","self","wake up","scribe","reformation","scroll","distribute","market","linen","homecoming","usual","seat","sash","curtain","notebook","cap","width","sail","dry","even","year","happiness","tree trunk","infancy","phantasm","how many","wide","store","degrees","courtyard","warehouse","borough","squat","bed","sane","corridor","abolish","government office","build","prolong","courts","valve","play with","abuse","style","two (formal)","bow","pull","strong","weak","bullet","lengthen","bowstring","arc","record","same kind","shape","shadow","coloring","carve","patent","going","behind","wait","gain","restore","journey","diameter","accompany","rhythm","benevolence","delicate","indications","junior","sequential","honorable","heart","think","idea","emotion","concept","invariably","hurry","bad","feelings","sex","wish","romance","grieve","angry","forget","cheerful","dreadful","trouble","accustomed","recollection","turn into","ego","war","commandment","frolic","door","fan","front door","hand","strike","hold","throw","finger","push","pick up","discard","grope","raise","shake","broaden","slip out","sketch","hang","grip","beckon","shouldering","conveyor","maneuver","branch","skill","bough","teach","organize","politics","set free","enemy","salvation","scatter","failure","happenstance","awe","sentence","adjusted","purification","fee","Big Dipper","diagonal","new","near","severance","axe","kill","direction","trip","tribe","carry out","national flag","rotation","nothingness","previously","day","time","early","bright","spring","daytime","darkness","weekday","reflect","star","yesterday","sultry","warmth","once upon","scenery","nightfall","cloudy","livelihood","outburst","clear up","bend","write","utmost","exchange","month","possess","period","morning","melodious","ambition","clothing","meat","bosom","brain","arm","abdomen","stature","texture","fat","knee","entrails","loins","thigh","lungs","tree","book","school","grove","forest","village","east","pine","board","bridge","Esq.","sideways","root","plant","pillar","cherry","rod","tag","counter for cupfuls","song","longing","delight","Europe","goodwill","deceive","stop","correct","walk","curriculum","year-end","warrior","this","death","remainder","particularly","augment","Mr.","grade","husk","carrier","establishment","duty","mother","every","poison","compare","all","criticism","fur","fine hair","family name","people","paper","spirit","acid","water","sea","pond","wash","current","decide","method","extinguish","lively","deep","pour","lake","harbor","warm","swim","waves","oil","pure","full","fire","inflammation","sort of thing","bake","smoke","illuminate","heat","burn","lamp","ardent","boil","steam","spot","bear","charcoal","claw","pick","baron","father","old man","refreshing","status","one-sided","printing block","signboard","fang","gracious","cow","thing","special","breed","animal sacrifice","sacrifice","dog","crime","conditions","single","cramped","cat","lunatic","seize","fierce","offering","hunting","monkey","mysterious","ratio","jewel","king","logic","present","ball","ring","squad","rare","harp","lapis lazuli","melon","tile","bottle","sweet","tremendously","products","utilize","equip","rice field","male","town","world","turn","farm","brush-stroke","abbreviation","detain","uncommon","livestock","tatami","bolt of cloth","doubt","ill","pain","exhausted","symptoms","heal","healing","get thin","epidemic","mark","departure","ascend","white","hundred","bull's eye","emperor","skin","he","incur","rend","dish","boom","steal","oversee","benefit","alliance","eye","see","straightaway","true","inter-","don","focus","sleep","eyeball","wink","drowsy","coach","pupil","halberd","contradiction","arrow","know","short","carpenter's square","stone","polish","assurance","magnet","cornerstone","tombstone","sand","cannon","stiff","company","gods","ritual","blessing","prohibition","pray","salute","celebrate","ballot","zen","Yu the Great","autumn","department","species","extent","tax","shift","rice plant","reap","ear of grain","secret","earnings","hole","empty","research","window","hard pressed","stealth","plug up","stand up","sound","parent","badge","emulate","edge","juvenile","bamboo","No.","laugh","calculate","etc.","solution","pipe","node","writing brush","simplicity","pattern","scheme","register","rice","refined","flour","sugar","provisions","grains","coarse","sticky","thread","association","line","practice","tie","sutra","end","picture","continue","affinity","promise","dainty","entwine","weave","shrink","genuine","tense","fiber","tighten","tin can","lack","put","guilt","penalty","buy","sheep","beauty","righteousness","virtuous","flock","foster","fresh","feathers","learn","the following","wing","soar","flip","someone","consider","and yet","endure","plow","decrease","ear","hear","post","holy","listen","wise","fertilizer","bring up","threaten","retainer","look to","storehouse","oneself","stinking","breath","climax","do","mortar","entertain","tongue","tale","dance","type of morning glory","boat","ship","navigate","warship","rowboat","good","eat","silver","retreat","limit","color","discontinue","flower","grass","tea","medicine","England","fall","leaf","young","suffering","baggage","vegetable","technique","wisteria","renowned","dilute","amass","tiger","tyrannize","void","prudence","insect","snake","butterfly","mosquito","bee","frog","dissolve","firefly","honey","ant","blood","masses","art","boulevard","defense","collide","equilibrium","garment","surface","back","sack","made in","attire","supplement","abundant","naked","collar","split","west","need","capsize","hegemony","outlook","memorize","standard","inspection","perusal","angle","unravel","contact","say","word","plot","read","opinion","tune","deliberation","evidence","test","call on","permit","evaluate","acknowledge","argument","mistake","detailed","chapter","apologize","valley","contain","bathe","beans","head","bountiful","pork","elephant","overpowering","countenance","northern barbarians","shellfish","substance","defeat","lend","expense","approve","fare","property","savings","intelligent","poverty","precious","prize","subscription","presents","bribe","tribute","red","pardon","suddenly","run","transcend","surpass","gist","proceed","leg","path","jump","long-distance","tracks","step","kick","hop","tread","leap","somebody","car","revolve","lightly","wheel","carry","take along","transport","contrast","radiance","axis","control","spicy","resign","false","sign of the dragon","agriculture","traffic","road","advance","send","week","accomplished","play","quick","return","elect","distant","escape","chase","overdo","suitable","astray","section","metropolis","county","son","outskirts","home country","mail","wicked","sake","drunk","brew","vinegar","ugly","cruel","awakening","explanation","ri (measure)","plains","quantity","heavy","black","gold","iron","needle","pointed","mirror","bell","copper","brocade","steel","key","chain","gun","confused","forge","lock","long","hair of the head","gate","interval","open","connection","closed","fight","tower","review","Inst.","sunshine","descend","ward off","occasion","storey","land","neighboring","precipitous","conceal","hinder","shade","regiment","follow","slave","gather","miscellaneous","difficult","masculine","feminine","employ","detach","vessels","rain","cloud","snow","thunder","electricity","fog","dew","quake","frost","spirits","blue","quiet","un-","repudiate","haiku","mask","noodles","leather","shoes","suitcase","Korea","differ","admirable","horizontal","leek","rhyme","face","topic","sort","forehead","petition","obey","place on the head","jurisdiction","trust","deposit","stubborn","paragraph","look back","repeatedly","sudden","drift","fly","drink","building","meal","decorate","domesticate","hungry","starve","mochi","neck","incense","fragrant","horse","station","parking","verification","boisterous","drive","equestrian","burdensome","skeleton","marrow","slippery","tall","hair","beard","sideburns","gloom","ghost","soul","demon","fascination","fish","whale","sea bream","salmon","alligator","tuna","bird","chirp","chicken","crane","hawk","pigeon","eagle","deer","lovely","foot of mountain","barley","hemp","grind","yellow","millet","silence","ink","embroidery","tripod","drum","rat","nose","dose","tooth","age","dragon","waterfall","flute"];
+const ALL_CHARS=["一","不","上","下","世","丈","三","万","与","両","七","並","丁","丘","丞","丙","且","丑","中","串","主","丸","丹","丼","乗","之","久","乏","乃","乱","九","乾","乙","乳","亀","乞","也","事","了","予","争","二","五","互","井","亜","亘","交","亡","京","亭","亥","享","亮","亦","亨","人","何","今","会","体","作","使","信","代","仕","他","付","任","伝","件","休","供","保","住","修","例","借","便","値","働","低","位","似","倒","優","元","先","光","児","兄","充","免","兆","克","入","全","内","八","六","公","共","兵","具","典","分","円","冊","再","写","冗","冠","軍","冥","冬","冷","凍","凄","准","凝","凛","次","冶","机","凡","凧","風","出","凶","凹","凸","函","刀","切","初","別","利","判","制","刊","前","削","割","刻","則","副","剣","劇","刑","列","創","力","動","助","努","効","勉","勝","勢","務","勤","加","募","勇","劣","功","包","勾","匂","勿","匁","化","北","匙","区","医","匠","匿","匹","十","千","半","南","卒","協","博","午","卓","升","華","占","卜","印","即","却","卵","危","原","厚","厳","圧","厄","私","去","台","参","県","能","厶","又","友","反","取","受","収","双","叔","及","叙","口","右","名","古","号","合","同","味","品","問","員","呼","告","命","周","和","唱","器","吸","吹","国","回","図","園","固","囲","団","因","困","圏","土","地","場","在","坂","型","城","基","堂","塩","境","増","壁","均","埋","域","墓","塗","堅","塊","士","声","売","壮","壱","各","条","夏","複","夕","外","夜","多","夢","大","天","太","夫","央","奇","奥","奨","奏","契","奮","奈","女","好","始","姉","妹","妻","婦","姿","娘","嫁","嫌","妊","如","妙","妨","委","威","婚","嬉","姓","子","字","学","存","季","孝","孫","孤","家","安","室","宮","客","実","定","完","官","守","宇","宝","宣","宿","密","寄","富","察","寒","寝","寸","寺","対","封","専","射","将","導","尊","尋","小","少","当","尚","尤","就","届","屋","展","局","居","属","層","尾","尿","屈","屯","山","岸","島","岩","峰","崩","嵐","崎","岳","峠","峡","川","州","巡","巣","災","工","左","差","巧","己","起","記","改","巻","配","市","布","帰","常","席","帯","幕","帳","帽","幅","帆","干","平","年","幸","幹","幼","幻","幾","広","店","度","庭","庫","府","座","床","康","廊","廃","庁","建","延","廷","弁","弄","弊","式","弐","弓","引","強","弱","弾","張","弦","弧","録","彙","形","影","彩","彫","彰","行","後","待","得","復","往","径","従","律","徳","微","徴","徒","循","御","心","思","意","感","想","必","急","悪","情","性","念","恋","悲","怒","忘","快","怖","悩","慣","憶","成","我","戦","戒","戯","截","載","戸","所","房","扇","扉","手","打","持","投","指","押","拾","捨","探","挙","振","拡","抜","描","掛","握","招","担","搬","操","支","技","枝","教","数","整","政","放","敵","救","散","敗","故","敬","文","斉","斎","料","斗","斜","新","近","断","斤","斬","方","旅","族","施","旗","旋","無","既","日","時","早","明","春","昼","暗","曜","映","星","昨","暑","暖","昔","景","晩","曇","暮","暴","晴","曲","書","最","替","月","有","期","朝","朗","望","服","肉","胸","脳","腕","腹","背","肌","脂","膝","臓","腰","股","肺","木","本","校","林","森","村","東","松","板","橋","様","横","根","植","柱","桜","棒","札","杯","歌","欲","歓","欧","款","欺","止","正","歩","歴","歳","武","此","死","残","殊","殖","殿","段","殺","殻","般","設","役","母","毎","毒","比","皆","批","毛","毫","氏","民","紙","気","酸","水","海","池","河","洗","流","決","法","消","活","深","注","湖","港","温","泳","波","油","清","満","火","炎","然","焼","煙","照","熱","燃","灯","烈","煮","蒸","点","熊","炭","爪","采","爵","父","爺","爽","状","片","版","牌","牙","雅","牛","物","特","牧","牲","犠","犬","犯","独","狭","猫","狂","獲","猛","献","猟","猿","玄","率","玉","王","理","現","球","環","班","珍","琴","瑠","瓜","瓦","瓶","甘","甚","生","産","用","備","田","男","町","界","番","畑","画","略","留","異","畜","畳","疋","疑","病","痛","疲","症","療","癒","痩","疫","痕","発","登","白","百","的","皇","泉","皮","彼","被","破","皿","盛","盗","監","益","盟","目","見","直","真","相","着","省","眠","眼","瞬","睡","督","瞳","矛","矛盾","矢","知","短","矩","石","研","確","磁","礎","碑","砂","砲","硬","社","神","祭","福","禁","祈","礼","祝","票","禅","禹","秋","科","種","積","程","税","称","移","稲","穫","穂","秘","稼","穴","空","究","窓","窮","窃","窒","立","音","親","章","競","端","童","竹","第","笑","算","等","答","管","箱","節","筆","簡","範","策","籍","篇","米","精","粉","糖","糧","粒","粗","粘","糸","組","線","練","結","経","終","絵","続","縁","約","細","絡","織","縮","純","緊","維","締","缶","缺","置","罪","罰","署","買","罵","羊","美","義","善","群","養","鮮","羽","習","翌","翼","翔","翻","老","者","考","而","耐","耕","耗","耳","聞","職","聖","聴","聡","肥","育","脅","臣","臨","蔵","自","臭","息","至","致","臼","興","舌","話","舞","舜","舟","船","航","艦","艇","良","食","銀","退","限","色","絶","花","草","茶","薬","英","落","葉","若","苦","荷","菜","芸","藤","著","薄","蓄","虎","虐","虚","慮","虫","蛇","蝶","蚊","蜂","蛙","融","蛍","蜜","蟻","血","衆","術","街","衛","衝","衡","衣","表","裏","袋","製","装","補","裕","裸","襟","裂","西","要","覆","覇","観","覚","規","視","覧","角","解","触","言","語","計","読","説","調","議","証","試","訪","許","評","認","論","誤","詳","課","謝","谷","容","浴","豆","頭","豊","豚","象","豪","貌","貊","貝","質","負","貸","資","費","賛","賃","財","貯","賢","貧","貴","賞","購","贈","賄","貢","赤","赦","赫","走","超","越","趣","赴","足","路","踊","距","跡","踏","蹴","跳","践","躍","身","躯","車","転","軽","輪","運","連","輸","較","輝","軸","轄","辛","辞","辟","辰","農","通","道","進","送","週","達","遊","速","返","選","遠","逃","追","過","適","迷","部","都","郡","郎","郊","邦","郵","邪","那","酒","酔","醸","酢","醜","酷","醒","釈","里","野","量","重","黒","金","鉄","針","鋭","鏡","鐘","銅","錦","鋼","鍵","鎖","銃","錯","鍛","錠","長","髪","門","間","開","関","閉","闘","閣","閲","闇","院","陽","降","防","際","階","陸","隣","険","隠","障","陰","隊","随","隷","集","雑","難","雄","雌","雇","離","隻","雨","雲","雪","雷","電","霧","露","震","霜","霊","青","静","非","排","俳","面","麺","革","靴","鞄","韓","違","偉","緯","韭","韻","顔","題","類","額","願","順","頂","領","頼","預","頑","項","顧","頻","颯","飄","飛","飲","館","飯","飾","飼","飢","餓","餅","首","香","馨","馬","駅","駐","験","騒","駆","騎","駄","骨","髄","滑","骸","高","髭","鬢","鬱","鬼","魂","魔","魅","魚","鯨","鯛","鮭","鰐","鮪","鳥","鳴","鶏","鶴","鷹","鳩","鷲","鹵","鹿","麗","麓","麦","麻","磨","黄","黍","黙","墨","黹","黽","鼎","鼓","鼠","鼻","済","剤","歯","齢","竜","龍","滝","龠"];
+const ALL_RAD_MEANINGS=["one","line","dot","bend","second","hook","two","lid","human","legs","enter","divide","upside down box","cover","ice","table","container","knife","power","wrap","spoon","box","hiding enclosure","ten","divination","seal","cliff","private","right hand","mouth","enclosure","earth","scholar","go","go slowly","evening","big","woman","child","roof","inch","small","lame","corpse","sprout","mountain","river","work","oneself","turban","dry","short thread","house on cliff","long stride","two hands","shoot","bow","pig snout","bristle","step","heart","spear","door","hand","branch","knock","script","dipper","axe","square","have not","sun","say","moon","tree","yawn","stop","death","weapon","do not","compare","fur","clan","steam","water","fire","claw","father","mix","split wood","slice","fang","cow","dog","dark","jade","melon","tile","sweet","life","use","field","bolt of cloth","sickness","footsteps","white","skin","dish","eye","arrow","stone","sign","track","grain","cave","stand","bamboo","rice","silk","jar","net","sheep","feather","old","beard","plow","ear","brush","meat","minister","self","arrive","mortar","tongue","opposite","boat","stopping","colour","grass","tiger stripes","insect","blood","clothes","west","see","horn","speech","valley","bean","pig","badger","shell","red","run","foot","body","cart","bitter","morning","walk","town","wine","distinguish","village","metal","long","gate","mound","slave","small bird","rain","blue","wrong","face","leather","tanned leather","leek","sound","leaf","wind","fly","eat","head","fragrant","horse","bone","tall","hair","fight","sacrificial wine","tripod","ghost","fish","bird","salt","deer","wheat","hemp","yellow","millet","black","embroidery","frog","sacrificial tripod","drum","rat","nose","even","tooth","dragon","turtle","flute"];
+const ALL_RAD_CHARS=["一","丨","丶","丿","乙","亅","二","亠","人","儿","入","八","冂","冖","冫","几","凵","刀","力","勹","匕","匚","匸","十","卜","卩","厂","厶","又","口","囗","土","士","夂","夊","夕","大","女","子","宀","寸","小","尢","尸","屮","山","巛","工","己","巾","干","幺","广","廴","廾","弋","弓","彐","彡","彳","心","戈","戸","手","支","攴","文","斗","斤","方","无","日","曰","月","木","欠","止","歹","殳","毋","比","毛","氏","气","水","火","爪","父","爻","爿","片","牙","牛","犬","玄","玉","瓜","瓦","甘","生","用","田","疋","疒","癶","白","皮","皿","目","矛","矢","石","示","禸","禾","穴","立","竹","米","糸","缶","网","羊","羽","老","而","耒","耳","聿","肉","臣","自","至","臼","舌","舛","舟","艮","色","艸","虍","虫","血","行","衣","西","見","角","言","谷","豆","豕","豸","貝","赤","走","足","身","車","辛","辰","辵","邑","酉","釆","里","金","長","門","阜","隶","隹","雨","青","非","面","革","韋","韭","音","頁","風","飛","食","首","香","馬","骨","高","髟","鬥","鬯","鬲","鬼","魚","鳥","鹵","鹿","麥","麻","黃","黍","黑","黹","黽","鼎","鼓","鼠","鼻","齊","齒","龍","龜","龠"];
+const ALL_JP=["いち","ぼう","てん","の","おつ","はねぼう","ふた","なべぶた","ひと","にんにょう","いる","はちがしら","まきがまえ","わかんむり","にすい","つくえ","うけばこ","かたな","ちから","つつみがまえ","さじのひ","はこがまえ","かくしがまえ","じゅう","ぼくのと","ふしづくり","がんだれ","む","また","くち","くにがまえ","つち","さむらい","ふゆがしら","すいにょう","ゆうべ","だい","おんな","こ","うかんむり","すん","ちいさい","まげあし","しかばね","てつ","やま","まがりがわ","たくみ","おのれ","はば","はす","いとがしら","まだれ","いんにょう","にじゅうあし","しきがまえ","ゆみ","けいがしら","さんづくり","ぎょうにんべん","こころ","かのほこ","とびらのと","て","しにょう","ぼくづくり","ぶんにょう","とます","おの","ほう","むにょう","にち","いわく","つき","き","あくび","とめる","がつへん","ほこつくり","なかれ","くらべる","け","うじ","きがまえ","みず","ひ","つめ","ちち","まじわる","しょうへん","かた","きばへん","うし","いぬ","げん","たま","うり","かわら","あまい","うまれる","もちいる","た","ひき","やまいだれ","はつがしら","しろ","けがわ","さら","め","むのほこ","や","いし","しめす","ぐうのあし","のぎ","あな","たつ","たけ","こめ","いと","ほとぎ","あみがしら","ひつじ","はね","おい","しかして","らいすき","みみ","ふでづくり","にく","しん","みずから","いたる","うす","した","ます","ふね","うしとら","いろ","くさ","とらかんむり","むし","ち","ぎょう","ころも","にし","みる","つの","ことば","たに","まめ","いのこ","むじな","かい","あか","はしる","あし","み","くるま","からい","しんのたつ","しんにゅう","おおざと","とりへん","のごめ","さと","かね","ながい","もん","ぎふのふ","れいづくり","ふるとり","あめ","あお","あらず","めん","かくのかわ","なめしがわ","にら","おと","おおがい","かぜ","とぶ","しょく","くび","においこう","うま","ほね","たかい","かみがしら","とうがまえ","ちょう","かなえ","おに","うお","とり","ろ","しか","むぎ","あさ","きいろ","きび","くろ","ふつ","べん","つづみ","ねずみ","はな","せい","は","りゅう","かめ","やく"];
+
+let state=loadState(),quiz=null;
+function defaultState(){return{s:{},settings:{count:12,mode:'mixed',priority:'yes'},ts:0}}
+function loadState(){try{const s=JSON.parse(localStorage.getItem('rad_66'));if(s&&s.s)return s}catch(e){}return defaultState()}
+function saveState(){localStorage.setItem('rad_66',JSON.stringify(state))}
+function getStat(k){if(!state.s[k])state.s[k]={seen:0,correct:0,wrong:0,streak:0};return state.s[k]}
+function getStatus(k){const s=getStat(k);if(s.seen===0)return'unseen';if(s.streak>=3&&s.correct/(s.correct+s.wrong)>=0.8)return'mastered';if(s.wrong>s.correct||s.streak<=0)return'struggling';return'learning'}
+function getProgressColor(s){const t=s.correct+s.wrong;if(t===0)return'#c0c0cc';const p=s.correct/t;let r,g,b;if(p<=0.5){const x=p/0.5;r=217+(212-217)*x;g=48+(160-48)*x;b=37+(23-37)*x}else{const x=(p-0.5)/0.5;r=212+(26-212)*x;g=160+(159-160)*x;b=23+(85-23)*x}return'rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')'}
+function saveSetting(k,v){state.settings[k]=k==='count'?parseInt(v):v;saveState()}
+
+function pickRandom(a,n){const u=[...new Set(a)],r=[],c=[...u];while(r.length<n&&c.length>0){const i=Math.floor(Math.random()*c.length);r.push(c.splice(i,1)[0])}return r}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+function genQ(kanji,rad){
+  const types=getQuestionTypes();
+  const type=types[Math.floor(Math.random()*types.length)];
+  if(type==='rad2meaning'){
+    const a=rad.m;
+    return{type:'Radical→Meaning',prompt:'What does this radical mean?',display:rad.rad,context:'',sub:'#'+rad.num+' '+rad.jp,answer:a,options:shuffle([a,...pickRandom(ALL_RAD_MEANINGS.filter(x=>x!==a),3)]),kanji:rad.rad,radNum:rad.num,fb_ok:'<span class="big">'+rad.rad+'</span> means <strong>"'+a+'"</strong> ('+rad.jp+')',fb_ng:'<span class="big">'+rad.rad+'</span> (#'+rad.num+') means: <strong>"'+a+'"</strong><br>Name: '+rad.jp}
+  }
+  if(type==='kanji2rad'){
+    const a=rad.rad;
+    return{type:'Kanji→Radical',prompt:'Which radical does <strong>'+kanji.c+'</strong> ('+kanji.m+') belong to?',display:kanji.c,context:'',sub:kanji.m,answer:a,options:shuffle([a,...pickRandom(ALL_RAD_CHARS.filter(x=>x!==a),3)]),kanji:kanji.c,radNum:rad.num,fb_ok:kanji.c+' uses radical <span class="big">'+a+'</span> (#'+rad.num+', '+rad.m+')',fb_ng:kanji.c+' belongs to radical <span class="big">'+a+'</span> (#'+rad.num+')<br>'+rad.jp+' = '+rad.m}
+  }
+  // meaning2kanji
+  const a=kanji.c;
+  return{type:'Meaning→Kanji',prompt:'Which kanji means "'+kanji.m+'"?',display:'',context:kanji.m,sub:'Radical: '+rad.rad+' (#'+rad.num+')',answer:a,options:shuffle([a,...pickRandom(ALL_CHARS.filter(x=>x!==a),3)]),kanji:kanji.c,radNum:rad.num,fb_ok:'"'+kanji.m+'" → <span class="big">'+a+'</span> (radical: '+rad.rad+')',fb_ng:'"'+kanji.m+'" is <span class="big">'+a+'</span><br>Radical: '+rad.rad+' (#'+rad.num+', '+rad.m+')'}
+}
+function getQuestionTypes(){const m=state.settings.mode;if(m==='mixed')return['rad2meaning','kanji2rad','meaning2kanji'];return[m]}
+function genQForType(type,kanji,rad){
+  if(type==='rad2meaning'){const a=rad.m;return{type:'Radical→Meaning',prompt:'What does this radical mean?',display:rad.rad,context:'',sub:'#'+rad.num+' '+rad.jp,answer:a,options:shuffle([a,...pickRandom(ALL_RAD_MEANINGS.filter(x=>x!==a),3)]),kanji:rad.rad,radNum:rad.num,fb_ok:'<span class="big">'+rad.rad+'</span> means <strong>"'+a+'"</strong> ('+rad.jp+')',fb_ng:'<span class="big">'+rad.rad+'</span> (#'+rad.num+') means: <strong>"'+a+'"</strong><br>Name: '+rad.jp}}
+  if(type==='kanji2rad'){const a=rad.rad;return{type:'Kanji→Radical',prompt:'Which radical does <strong>'+kanji.c+'</strong> ('+kanji.m+') belong to?',display:kanji.c,context:'',sub:kanji.m,answer:a,options:shuffle([a,...pickRandom(ALL_RAD_CHARS.filter(x=>x!==a),3)]),kanji:kanji.c,radNum:rad.num,fb_ok:kanji.c+' uses radical <span class="big">'+a+'</span> (#'+rad.num+', '+rad.m+')',fb_ng:kanji.c+' belongs to radical <span class="big">'+a+'</span> (#'+rad.num+')<br>'+rad.jp+' = '+rad.m}}
+  const a=kanji.c;return{type:'Meaning→Kanji',prompt:'Which kanji means "'+kanji.m+'"?',display:'',context:kanji.m,sub:'Radical: '+rad.rad+' (#'+rad.num+')',answer:a,options:shuffle([a,...pickRandom(ALL_CHARS.filter(x=>x!==a),3)]),kanji:kanji.c,radNum:rad.num,fb_ok:'"'+kanji.m+'" → <span class="big">'+a+'</span> (radical: '+rad.rad+')',fb_ng:'"'+kanji.m+'" is <span class="big">'+a+'</span><br>Radical: '+rad.rad+' (#'+rad.num+', '+rad.m+')'};
+}
+
+function _pick2RadTypes(qTypes){
+  if(qTypes.length<2)return[qTypes[0],qTypes[0]];
+  const s=shuffle([...qTypes]);return[s[0],s[1]];
+}
+let fontScale=parseInt(localStorage.getItem('fontScale')||'100');
+function adjustFontSize(dir){
+  fontScale=Math.max(80,Math.min(150,fontScale+dir*10));
+  localStorage.setItem('fontScale',fontScale);
+  applyFontScale();
+}
+function applyFontScale(){
+  const r=fontScale/100;
+  document.getElementById('font-size-label').textContent=fontScale+'%';
+  const q=document.getElementById('quiz-screen');
+  if(q){
+    q.querySelectorAll('.question-kanji').forEach(e=>e.style.fontSize=(6*r)+'rem');
+    q.querySelectorAll('.question-context').forEach(e=>e.style.fontSize=(2*r)+'rem');
+    q.querySelectorAll('.question-prompt').forEach(e=>e.style.fontSize=(1*r)+'rem');
+    q.querySelectorAll('.question-sub').forEach(e=>e.style.fontSize=(1.3*r)+'rem');
+    q.querySelectorAll('.option-btn').forEach(e=>e.style.fontSize=(2*r)+'rem');
+    q.querySelectorAll('.feedback-header').forEach(e=>e.style.fontSize=(1.4*r)+'rem');
+    q.querySelectorAll('.feedback-detail').forEach(e=>e.style.fontSize=(1.25*r)+'rem');
+  }
+}
+applyFontScale();
+
+function startQuiz(mode){
+  const KANJI_PER_SESSION=5;
+  let pool=[];
+  if(mode==='mistakes'&&quiz&&quiz.mistakes.length>0){pool=quiz.mistakes.map(m=>({k:ALL_KANJI.find(x=>x.c===m.kanji),r:RADS.find(r=>r.num===m.radNum)})).filter(x=>x.k)}
+  else if(mode==='verify'){ALL_KANJI.forEach(k=>{if(getStatus(k.c)!=='unseen'){const r=RADS.find(x=>x.k.some(y=>y.c===k.c));if(r)pool.push({k,r})}});if(pool.length<3)RADS.forEach(r=>r.k.forEach(k=>pool.push({k,r})))}
+  else if(mode==='weak'){ALL_KANJI.forEach(k=>{const st=getStatus(k.c);if(st==='struggling'||st==='learning'){const r=RADS.find(x=>x.k.some(y=>y.c===k.c));if(r)pool.push({k,r})}});if(pool.length<3)RADS.forEach(r=>r.k.forEach(k=>pool.push({k,r})))}
+  else{const items=[];RADS.forEach(r=>r.k.forEach(k=>items.push({k,r})));if(state.settings.priority==='yes'){const w=[],l=[],u=[],m=[];items.forEach(x=>{const s=getStatus(x.k.c);if(s==='struggling')w.push(x);else if(s==='learning')l.push(x);else if(s==='unseen')u.push(x);else m.push(x)});const mShuf=shuffle(m),mSample=mShuf.slice(0,Math.max(1,Math.ceil(mShuf.length*0.2)));pool=[...shuffle(w),...shuffle(l),...shuffle(u),...mSample]}else pool=shuffle(items)}
+  if(mode!=='verify'&&mode!=='mistakes'){while(pool.length<KANJI_PER_SESSION)pool=[...pool,...shuffle(pool.slice(0,Math.min(pool.length,20)))];pool=pool.slice(0,KANJI_PER_SESSION);}
+  pool=shuffle(pool);
+  const qTypes=getQuestionTypes();
+  const questions=pool.flatMap(x=>{
+    const [t1,t2]=_pick2RadTypes(qTypes);
+    const q1=genQForType(t1,x.k,x.r);
+    const q2=genQForType(t2,x.k,x.r);
+    return[q1,q2];
+  });
+  const shuffled=shuffle(questions);
+  const typesUsed={};shuffled.forEach(q=>{const k=q.kanji;if(!typesUsed[k])typesUsed[k]=new Set();typesUsed[k].add(q.type);});
+  quiz={questions:shuffled,current:0,correct:0,wrong:0,mistakes:[],answered:false,retryStreaks:{},originalLength:shuffled.length,typesUsed,verifyMode:false,verifyStart:0};
+  showScreen('quiz');renderQuestion()
+}
+
+function renderQuestion(){
+  if(!quiz||quiz.current>=quiz.questions.length){showResults();return}
+  const q=quiz.questions[quiz.current];quiz.answered=false;
+  if(quiz.verifyMode){
+    const vIdx=quiz.current-quiz.verifyStart;
+    document.getElementById('quiz-mode-label').textContent='🔄 Verify: '+q.type;
+    document.getElementById('quiz-progress-text').textContent='Verify '+(vIdx+1)+' / '+quiz.verifyLength;
+    document.getElementById('progress-fill').style.width=Math.min(100,((vIdx+1)/quiz.verifyLength)*100)+'%';
+  }else{
+    document.getElementById('quiz-mode-label').textContent=q.type;
+    document.getElementById('quiz-progress-text').textContent=Math.min(quiz.current+1,quiz.originalLength)+' / '+quiz.originalLength;
+    document.getElementById('progress-fill').style.width=Math.min(100,(quiz.current/quiz.originalLength)*100)+'%';
+  }
+  document.getElementById('question-prompt').innerHTML=q.prompt;
+  document.getElementById('question-kanji').textContent=q.display;
+  document.getElementById('question-kanji').style.display=q.display?'block':'none';
+  document.getElementById('question-context').innerHTML=q.context||'';
+  document.getElementById('question-context').style.display=q.context?'block':'none';
+  document.getElementById('question-sub').textContent=q.sub||'';
+  document.getElementById('options').innerHTML=q.options.map((o,i)=>'<button class="option-btn" onclick="answer('+i+')"><span class="key-hint">'+(i+1)+'</span>'+o+'</button>').join('');
+  document.getElementById('feedback-card').className='feedback-card';
+  document.getElementById('next-btn').className='next-btn';
+  applyFontScale()
+}
+
+function _requeueRad(q){
+  const kObj=ALL_KANJI.find(x=>x.c===q.kanji)||{c:q.kanji,m:''};
+  const rObj=RADS.find(r=>r.num===q.radNum);
+  if(!rObj)return;
+  const rQ=genQ(kObj,rObj);rQ.isRetry=true;
+  if(quiz.verifyMode)rQ.isVerify=true;
+  const gap=3+Math.floor(Math.random()*3);
+  const insertAt=Math.min(quiz.current+gap,quiz.questions.length);
+  quiz.questions.splice(insertAt,0,rQ);
+}
+function answer(idx){
+  if(quiz.answered)return;quiz.answered=true;
+  const q=quiz.questions[quiz.current],chosen=q.options[idx],ok=chosen===q.answer;
+  const k=q.kanji;
+  if(!quiz.typesUsed[k])quiz.typesUsed[k]=new Set();quiz.typesUsed[k].add(q.type);
+  const s=getStat(k);s.seen++;
+  if(ok){
+    s.correct++;s.streak++;
+    if(!q.isRetry&&!q.isVerify)quiz.correct++;
+    if(k in quiz.retryStreaks){
+      quiz.retryStreaks[k]++;
+      if(quiz.retryStreaks[k]<3)_requeueRad(q);
+    }
+  }else{
+    s.wrong++;s.streak=0;
+    if(!q.isRetry&&!q.isVerify)quiz.wrong++;
+    if(!quiz.mistakes.some(m=>m.kanji===k))quiz.mistakes.push(q);
+    quiz.retryStreaks[k]=0;
+    _requeueRad(q);
+  }
+  saveState();
+  document.querySelectorAll('.option-btn').forEach((b,i)=>{b.classList.add('disabled');if(q.options[i]===q.answer)b.classList.add('correct');if(i===idx&&!ok)b.classList.add('wrong')});
+  const fb=document.getElementById('feedback-card'),fh=document.getElementById('feedback-header'),fd=document.getElementById('feedback-detail');
+  if(ok){
+    fb.className='feedback-card show correct-fb';fh.className='feedback-header correct-text';
+    if(k in quiz.retryStreaks&&quiz.retryStreaks[k]>=3){fh.textContent='🎌 Mastered! You got '+k+' right 3 times!';fd.innerHTML=q.fb_ok;}
+    else if(k in quiz.retryStreaks){fh.textContent='✓ Correct! ('+quiz.retryStreaks[k]+'/3 streak)';fd.innerHTML=q.fb_ok;}
+    else{fh.textContent='✓ Correct!';fd.innerHTML=q.fb_ok;}
+  }else{
+    fb.className='feedback-card show wrong-fb';fh.className='feedback-header wrong-text';fh.innerHTML='✗ Wrong — you chose "'+chosen+'"';
+    fd.innerHTML=q.fb_ng+'<br><small style="color:var(--text-dim)">This will come back until you get it right 3 times.</small>';
+  }
+  document.getElementById('next-btn').className='next-btn show';updateStatsBar()
+}
+
+function nextQuestion(){
+  quiz.current++;
+  if(quiz.current>=quiz.questions.length){
+    if(!quiz.verifyMode){startVerifyRound();}
+    else{showResults();}
+  }else renderQuestion();
+}
+
+function _pickDifferentRadType(kanji){
+  const allTypes=['rad2meaning','kanji2rad','meaning2kanji'];
+  const displayToInternal={'Radical→Meaning':'rad2meaning','Kanji→Radical':'kanji2rad','Meaning→Kanji':'meaning2kanji'};
+  const used=quiz.typesUsed[kanji]||new Set();
+  const usedInternal=new Set();used.forEach(t=>{if(displayToInternal[t])usedInternal.add(displayToInternal[t]);else usedInternal.add(t);});
+  const unused=allTypes.filter(t=>!usedInternal.has(t));
+  if(unused.length>0)return unused[Math.floor(Math.random()*unused.length)];
+  return allTypes[Math.floor(Math.random()*allTypes.length)];
+}
+
+function startVerifyRound(){
+  const seen={};const items=[];
+  for(let i=0;i<quiz.originalLength;i++){
+    const q=quiz.questions[i];if(!q)continue;
+    const k=q.kanji;
+    if(!seen[k]){
+      seen[k]=true;
+      const kObj=ALL_KANJI.find(x=>x.c===k);
+      const rObj=RADS.find(r=>r.num===q.radNum);
+      if(kObj&&rObj)items.push({k:kObj,r:rObj,kanji:k});
+    }
+  }
+  if(items.length===0){showResults();return;}
+  const vQuestions=shuffle(items).map(item=>{
+    const type=_pickDifferentRadType(item.kanji);
+    const vq=genQForType(type,item.k,item.r);vq.isVerify=true;
+    return vq;
+  });
+  quiz.verifyMode=true;
+  quiz.verifyStart=quiz.questions.length;
+  quiz.verifyLength=vQuestions.length;
+  quiz.questions.push(...vQuestions);
+  renderQuestion();
+}
+
+function showResults(){
+  const t=quiz.correct+quiz.wrong,p=t>0?Math.round(quiz.correct/t*100):0;state.ts++;saveState();
+  document.getElementById('results-score').textContent=p+'%';
+  document.getElementById('results-score').className='results-score '+(p>=80?'great':p>=50?'ok':'bad');
+  let subtitle=quiz.correct+' correct, '+quiz.wrong+' wrong out of '+t;
+  if(quiz.verifyMode)subtitle+=' + '+quiz.verifyLength+' verification';
+  document.getElementById('results-subtitle').textContent=subtitle;
+  const me=document.getElementById('results-mistakes');
+  if(quiz.mistakes.length>0)me.innerHTML='<h3>Mistakes ('+quiz.mistakes.length+')</h3>'+quiz.mistakes.map(q=>'<div class="mistake-item"><div class="mi-kanji">'+q.kanji+'</div><div class="mi-info"><strong>'+q.answer+'</strong><br>'+q.type+'</div></div>').join('');
+  else me.innerHTML='<p style="color:var(--correct);text-align:center;padding:20px">Perfect!</p>';
+  document.getElementById('retry-mistakes-btn').style.display=quiz.mistakes.length>0?'':'none';
+  const coveredSet={};const coveredList=[];
+  for(let i=0;i<quiz.originalLength;i++){const q=quiz.questions[i];if(q&&!coveredSet[q.kanji]){coveredSet[q.kanji]=true;const kObj=ALL_KANJI.find(x=>x.c===q.kanji);coveredList.push({c:q.kanji,m:kObj?kObj.m:''});}}
+  const ce=document.getElementById('results-covered');
+  ce.innerHTML='<h3 style="color:var(--text-dim);font-size:.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Kanji Covered ('+coveredList.length+')</h3><div style="display:flex;flex-wrap:wrap;gap:8px">'+coveredList.map(e=>{const st=getStatus(e.c);const col=st==='mastered'?'var(--correct)':st==='struggling'?'var(--wrong)':'var(--text)';return'<div onclick="showModal(\''+e.c+'\')" style="cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;min-width:70px"><div style="font-size:2rem;font-family:\'Shippori Mincho B1\',serif;color:'+col+'">'+e.c+'</div><div style="font-size:.75rem;color:var(--text-dim)">'+e.m+'</div></div>'}).join('')+'</div>';
+  showScreen('results')
+}
+
+function renderReviewGrid(f){
+  const grid=document.getElementById('kanji-grid');
+  let items=[];RADS.forEach(r=>r.k.forEach(k=>items.push({k,r})));
+  if(f&&f!=='all')items=items.filter(x=>getStatus(x.k.c)===f);
+  grid.innerHTML=items.map(x=>{const s=getStat(x.k.c),st=getStatus(x.k.c),col=getProgressColor(s),cls=st==='unseen'?' unseen':'';return'<div class="kanji-tile" onclick="showModal(\''+x.k.c+'\')"><div class="tile-kanji'+cls+'" style="'+(cls?'':'color:'+col)+'">'+x.k.c+'</div><div class="tile-reading">'+x.k.m+'</div></div>'}).join('');
+  updateReviewAccuracy();
+}
+function updateReviewAccuracy(){
+  let totalC=0,totalW=0,nU=0,nL=0,nS=0,nM=0;
+  ALL_KANJI.forEach(k=>{const s=getStat(k.c);totalC+=s.correct;totalW+=s.wrong;const st=getStatus(k.c);if(st==='unseen')nU++;else if(st==='learning')nL++;else if(st==='struggling')nS++;else nM++});
+  const total=totalC+totalW,pct=total>0?Math.round(totalC/total*100):0;
+  const T=ALL_KANJI.length,mPct=T>0?Math.round(nM/T*100):0,remaining=T-nM;
+  document.getElementById('review-mastery-pct').textContent=nM+' / '+T+' Mastered';
+  document.getElementById('review-mastery-detail').textContent=remaining>0?remaining+' remaining':'All mastered!';
+  const mFill=document.getElementById('review-mastery-fill');
+  mFill.style.width=mPct+'%';
+  mFill.style.background=mPct>=100?'var(--correct)':mPct>=50?'#d4a017':'var(--accent)';
+  document.getElementById('review-acc-pct').textContent=pct+'% Accuracy';
+  document.getElementById('review-acc-detail').textContent=totalC+' correct / '+total+' total answers';
+  const fill=document.getElementById('review-acc-fill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct>=80?'var(--correct)':pct>=50?'#d4a017':'var(--wrong)';
+  document.getElementById('review-status-counts').innerHTML='<span><span class="dot" style="background:#c0c0cc"></span>Unseen '+nU+'</span><span><span class="dot" style="background:#d4a017"></span>Learning '+nL+'</span><span><span class="dot" style="background:var(--wrong)"></span>Struggling '+nS+'</span><span><span class="dot" style="background:var(--correct)"></span>Mastered '+nM+'</span>';
+}
+function filterReview(f,b){document.querySelectorAll('.review-filters button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');document.getElementById('review-search').value='';renderReviewGrid(f)}
+function searchReview(query){
+  const q=query.trim().toLowerCase();
+  if(!q){renderReviewGrid('all');return;}
+  document.querySelectorAll('.review-filters button').forEach(x=>x.classList.remove('active'));
+  const grid=document.getElementById('kanji-grid');
+  const matches=[];
+  RADS.forEach(r=>r.k.forEach(k=>{
+    if(k.c.includes(q)||k.m.toLowerCase().includes(q)||r.rad.includes(q)||r.m.toLowerCase().includes(q)||r.jp.includes(q))matches.push({k,r});
+  }));
+  grid.innerHTML=matches.map(x=>{const s=getStat(x.k.c),st=getStatus(x.k.c),col=getProgressColor(s),cls=st==='unseen'?' unseen':'';return'<div class="kanji-tile" onclick="showModal(\''+x.k.c+'\')"><div class="tile-kanji'+cls+'" style="'+(cls?'':'color:'+col)+'">'+x.k.c+'</div><div class="tile-reading">'+x.k.m+'</div></div>'}).join('');
+  if(matches.length===0)grid.innerHTML='<p style="color:var(--text-dim);padding:20px;text-align:center">No matches found</p>';
+}
+
+function showModal(c){
+  const item=ALL_KANJI.find(x=>x.c===c);if(!item)return;
+  const rad=RADS.find(r=>r.k.some(x=>x.c===c));
+  const s=getStat(c),st=getStatus(c);
+  document.getElementById('modal-kanji').textContent=c;
+  let info='<dt>Meaning</dt><dd>'+item.m+'</dd>';
+  if(rad)info+='<dt>Radical</dt><dd>'+rad.rad+' (#'+rad.num+') '+rad.jp+' — '+rad.m+'</dd>';
+  info+='<dt>Status</dt><dd style="text-transform:capitalize">'+st+'</dd>';
+  document.getElementById('modal-info').innerHTML=info;
+  const t=s.correct+s.wrong,a=t>0?Math.round(s.correct/t*100):0;
+  document.getElementById('modal-stats').innerHTML='<div><div class="ms-num" style="color:var(--correct)">'+s.correct+'</div>Correct</div><div><div class="ms-num" style="color:var(--wrong)">'+s.wrong+'</div>Wrong</div><div><div class="ms-num">'+a+'%</div>Accuracy</div>';
+  document.getElementById('modal-overlay').classList.add('show')
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show')}
+
+function showScreen(s){
+  ['quiz-screen','review-screen','results-screen','settings-screen'].forEach(x=>document.getElementById(x).style.display='none');
+  document.querySelectorAll('nav .nav-links button').forEach(b=>b.classList.remove('active'));
+  switch(s){case'quiz':document.getElementById('quiz-screen').style.display='block';document.querySelectorAll('nav .nav-links button')[0].classList.add('active');if(!quiz)startQuiz('mixed');break;case'review':document.getElementById('review-screen').style.display='block';document.querySelectorAll('nav .nav-links button')[1].classList.add('active');renderReviewGrid('all');break;case'results':document.getElementById('results-screen').style.display='block';break;case'settings':document.getElementById('settings-screen').style.display='block';document.querySelectorAll('nav .nav-links button')[3].classList.add('active');loadSettings();break}
+  updateStatsBar()
+}
+function loadSettings(){document.getElementById('setting-mode').value=state.settings.mode;document.getElementById('setting-priority').value=state.settings.priority}
+function updateStatsBar(){
+  document.getElementById('stat-seen').textContent=ALL_KANJI.filter(k=>getStat(k.c).seen>0).length;
+  document.getElementById('stat-mastered').textContent=ALL_KANJI.filter(k=>getStatus(k.c)==='mastered').length;
+  document.getElementById('stat-struggling').textContent=ALL_KANJI.filter(k=>getStatus(k.c)==='struggling').length;
+  if(quiz){document.getElementById('stat-streak').textContent=function(){let s=0;for(let i=quiz.current-1;i>=0;i--){if(!quiz.mistakes.find(m=>m===quiz.questions[i]))s++;else break}return s}();document.getElementById('stat-session-correct').textContent=quiz.correct;document.getElementById('stat-session-total').textContent=quiz.correct+quiz.wrong}
+}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('modal-overlay').classList.contains('show')){if(e.key==='Escape')closeModal();return}
+  if(document.getElementById('quiz-screen').style.display==='none')return;
+  if(['1','2','3','4'].includes(e.key)){const i=parseInt(e.key)-1;const b=document.querySelectorAll('.option-btn');if(b[i]&&!quiz.answered)answer(i)}
+  if((e.key==='Enter'||e.key===' ')&&quiz&&quiz.answered){e.preventDefault();nextQuestion()}
+});
+startQuiz('mixed');
+</script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js")}</script>
+</body>
+</html>
