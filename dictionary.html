@@ -425,22 +425,30 @@ function doSearch() {
 
   // Apply text search
   if (q) {
-    const hira = toHiragana(q);
-    results = results.filter(k => {
-      if (k.kanji.includes(q)) return true;
-      if (k.meaning.toLowerCase().includes(q)) return true;
-      if (k.on.some(r => r.toLowerCase().includes(q))) return true;
-      if (k.kun.some(r => r.toLowerCase().includes(q))) return true;
-      // Search compounds too
-      if (k.compounds && k.compounds.some(c =>
-        c.word.includes(q) || c.reading.includes(q) || c.meaning.toLowerCase().includes(q)
-      )) return true;
-      if (hira !== q) {
-        if (k.on.some(r => toHiragana(r).includes(hira))) return true;
-        if (k.kun.some(r => r.replace(/\..*/,'').includes(hira))) return true;
-      }
-      return false;
-    });
+    // Extract kanji characters from pasted text (CJK range)
+    const kanjiInQuery = [...q].filter(ch => ch.charCodeAt(0) >= 0x4e00 && ch.charCodeAt(0) <= 0x9fff);
+    if (kanjiInQuery.length > 1) {
+      // Multi-kanji input: show all kanji from the pasted text that exist in our database
+      const kanjiSet = new Set(kanjiInQuery);
+      results = results.filter(k => kanjiSet.has(k.kanji));
+    } else {
+      const hira = toHiragana(q);
+      results = results.filter(k => {
+        if (k.kanji.includes(q)) return true;
+        if (k.meaning.toLowerCase().includes(q)) return true;
+        if (k.on.some(r => r.toLowerCase().includes(q))) return true;
+        if (k.kun.some(r => r.toLowerCase().includes(q))) return true;
+        // Search compounds too
+        if (k.compounds && k.compounds.some(c =>
+          c.word.includes(q) || c.reading.includes(q) || c.meaning.toLowerCase().includes(q)
+        )) return true;
+        if (hira !== q) {
+          if (k.on.some(r => toHiragana(r).includes(hira))) return true;
+          if (k.kun.some(r => r.replace(/\..*/,'').includes(hira))) return true;
+        }
+        return false;
+      });
+    }
   }
 
   renderGrid(results);
