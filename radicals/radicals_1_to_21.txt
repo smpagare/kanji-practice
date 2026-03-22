@@ -1,0 +1,21 @@
+1|一:one,不:negative,上:above,下:below,世:generation,丈:length,三:three,万:ten thousand,与:bestow,両:both,七:seven,並:row,丁:street,丘:hill,丞:help,丑:sign of the ox,丙:third class,且:moreover
+2|中:in,串:spit
+3|主:lord,丸:round,丹:rust-colored,丼:bowl
+4|乗:ride,之:of,久:long time,乏:destitution,乃:from
+5|乱:riot,九:nine,乾:drought,乙:the latter,乳:milk,亀:tortoise,乞:beg,也:to be
+6|事:matter,了:complete,予:beforehand,争:contend
+7|二:two,五:five,互:mutually,井:well,亜:Asia,亘:span
+8|交:mingle,亡:deceased,京:capital,亦:also,享:enjoy,亭:pavilion,亥:sign of the hog,亨:pass through,亮:clear
+9|人:person,何:what,今:now,俺:I,会:meeting,僕:me,体:body,作:make,使:use,信:faith,以:by means of,代:substitute,仕:attend,他:other,付:adhere,任:responsibility,伝:transmit,倒:overthrow,仲:go-between,備:equip,件:affair,優:tenderness,供:submit,休:rest,傷:wound,像:statue,係:person in charge,介:jammed in,令:orders,位:rank,似:becoming,但:however,保:protect,余:too much,住:dwell,個:individual,修:discipline,仮:sham,例:example,佐:assistant,側:side,借:borrow,便:convenience,値:price,伏:prostrated,働:work,侵:encroach,候:climate,低:lower,偶:accidentally,価:value,偵:spy,什:utensil,依:reliant,僧:Buddhist priest,倍:double,停:halt,伸:expand,偽:falsehood,偉:admirable,企:undertake,儀:ceremony,億:hundred million,伊:Italy,健:healthy,侍:waiter,仙:hermit,倉:godown,催:sponsor,舎:cottage,伯:chief,伴:consort,仰:face-up,償:reparation,傘:umbrella,仏:Buddha,傍:bystander,伺:pay respects,傾:lean,傑:greatness,仁:humanity,侮:scorn,偏:partial,伍:five,侯:marquis,伐:fell,僚:colleague,僅:a wee bit,俗:vulgar,併:join,佳:excellent,促:stimulate,傲:be proud,俳:haiku,伽:nursing,倫:ethics,倣:emulate,舗:shop,伎:deed,債:bond,俵:bag,俊:sagacious,侶:companion,儒:Confucian,佑:help,俸:stipend,倹:frugal,倖:happiness,偲:recollect,倭:Yamato,侃:strong,伶:actor,侑:urge to eat
+10|先:before,兄:elder brother,光:ray,元:beginning,児:newborn babe,免:excuse,充:allot,党:party,克:overcome,兆:portent,允:license
+11|入:enter,全:whole
+12|兵:soldier,公:public,共:together,八:eight,具:tool,六:six,其:that,典:code,兼:concurrently
+13|内:inside,再:again,円:circle,冒:risk,冊:tome
+14|写:copy,冗:superfluous,冥:dark,冠:crown
+15|冷:cool,冬:winter,凍:frozen,准:quasi-,凄:uncanny,凝:congeal,凌:endure,冴:be clear,冶:melting,凜:cold
+16|処:dispose,凡:commonplace,凪:lull,凱:victory song
+17|出:exit,凶:villain,凸:convex,凹:concave
+18|前:in front,分:part,切:cut,初:first time,別:separate,到:arrival,利:profit,剣:sabre,制:system,刀:sword,刻:engrave,判:judgement,割:proportion,刑:punish,刺:thorn,副:vice-,列:file,劇:drama,刃:blade,創:genesis,則:rule,削:plane,剤:dose,券:ticket,刹:temple,刊:publish,剥:come off,刈:reap,剛:sturdy,刷:printing,剰:surplus,剖:divide
+19|力:power,勝:victory,動:move,助:help,加:add,効:merit,務:task,勇:courage,勢:forces,功:achievement,労:labor,勉:exertion,勘:intuition,努:toil,勤:diligence,劣:inferiority,募:recruit,励:encourage,勧:persuade,勲:meritorious deed,勅:imperial order,勃:suddenness,劾:censure,勁:strong
+20|包:wrap,匂:fragrant,勾:be bent,勺:ladle,匁:monme
+21|化:change,北:north
