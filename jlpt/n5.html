@@ -1003,6 +1003,98 @@
     from { transform: translateX(120%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
   }
+
+  /* --- Blink Mode --- */
+  .blink-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 10000;
+    background: #fff;
+    flex-direction: column;
+    font-family: inherit;
+  }
+  .blink-overlay.show { display: flex; }
+  .blink-progress { position: absolute; top: 0; left: 0; height: 4px; background: var(--accent); transition: width 0.3s ease; z-index: 10001; }
+  .blink-countdown { position: absolute; top: 4px; left: 0; height: 3px; background: #e0dff8; transition: width 0.05s linear; z-index: 10001; }
+  .blink-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 40px 24px 0;
+    overflow-y: auto;
+    gap: 0;
+  }
+  .blink-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #eee;
+    padding: 20px;
+    height: 100%;
+  }
+  .blink-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px 40px;
+    height: 100%;
+    overflow-y: auto;
+  }
+  .blink-kanji { font-size: 18rem; font-weight: 700; line-height: 1.1; color: #1a1a2e; }
+  .blink-meaning { font-size: 3rem; color: var(--accent); margin-top: 16px; font-weight: 500; text-align: center; }
+  .blink-readings { font-size: 3.5rem; color: #333; line-height: 2; margin-bottom: 32px; }
+  .blink-readings strong { font-size: 1.5rem; letter-spacing: 1px; color: var(--accent); }
+  .blink-vocab { font-size: 2.6rem; line-height: 2; color: #444; }
+  .blink-vocab .bv-word { font-weight: 600; font-size: 3.2rem; color: #1a1a2e; }
+  .blink-vocab .bv-reading { color: #888; font-size: 2.2rem; }
+  .blink-vocab .bv-meaning { color: var(--accent); font-size: 2.2rem; }
+  .blink-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    background: #f8f8fc;
+    border-top: 1px solid #eee;
+  }
+  .blink-controls button {
+    background: #eee;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .blink-controls button:hover { background: #ddd; }
+  .blink-controls button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .blink-close {
+    position: absolute;
+    top: 14px; right: 18px;
+    background: none; border: none;
+    font-size: 2rem; color: #999;
+    cursor: pointer; z-index: 10002;
+    line-height: 1;
+  }
+  .blink-close:hover { color: #333; }
+  .blink-counter { font-size: 0.8rem; color: #999; position: absolute; top: 16px; left: 20px; z-index: 10002; }
+  [data-theme="dark"] .blink-overlay { background: #1a1a2e; }
+  [data-theme="dark"] .blink-kanji { color: #eee; }
+  [data-theme="dark"] .blink-meaning { color: #aaa; }
+  [data-theme="dark"] .blink-readings { color: #ccc; }
+  [data-theme="dark"] .blink-vocab { color: #bbb; }
+  [data-theme="dark"] .blink-vocab .bv-word { color: #eee; }
+  [data-theme="dark"] .blink-vocab .bv-reading { color: #777; }
+  [data-theme="dark"] .blink-left { border-color: #333; }
+  [data-theme="dark"] .blink-controls { background: #111; border-color: #333; }
+  [data-theme="dark"] .blink-controls button { background: #222; border-color: #444; color: #ccc; }
+  [data-theme="dark"] .blink-close { color: #666; }
 </style>
 <script>(function(){var t=localStorage.getItem('kentei_theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
 </head>
@@ -1111,6 +1203,7 @@
     <div style="margin-bottom:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
       <button onclick="startQuiz('verify')" style="background:var(--accent);border:none;color:#fff;padding:10px 24px;border-radius:10px;font-size:0.9rem;cursor:pointer">🔄 Verify All Seen Kanji</button>
       <button onclick="openFlashcard()" style="background:var(--surface);border:1px solid var(--accent);color:var(--accent);padding:10px 24px;border-radius:10px;font-size:0.9rem;cursor:pointer">🎴 Random Flashcard</button>
+      <button onclick="startBlink('all')" style="background:linear-gradient(135deg,#6c63ff,#e87461);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:0.9rem;cursor:pointer;font-weight:600">&#9889; Blink Mode</button>
       <input type="text" id="review-search" placeholder="Search kanji, reading, or meaning..." oninput="searchReview(this.value)" style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:1rem;outline:none">
     </div>
     <div class="review-filters">
@@ -2424,7 +2517,136 @@ function updateStatsBar() {
 function getCurrentStreak(){if(!quiz)return 0;let s=0;for(let i=quiz.current-1;i>=0;i--){if(!quiz.mistakes.find(m=>m===quiz.questions[i]))s++;else break;}return s;}
 
 // ── KEYBOARD ──
+// --- Blink Mode ---
+let blink={deck:[],idx:0,timer:null,countdown:null,speed:3,paused:false,filter:'all'};
+
+function startBlink(filter){
+  blink.filter=filter||'all';
+  blink.speed=state.settings.blinkSpeed||3;
+  blink.paused=false;
+  blink.deck=buildBlinkDeck(blink.filter);
+  if(blink.deck.length===0){alert('No kanji for this filter');return;}
+  blink.idx=0;
+  document.getElementById('blink-overlay').classList.add('show');
+  updateBlinkSpeedButtons();
+  updateBlinkFilterButtons();
+  document.getElementById('blink-pause-btn').textContent='\u23F8';
+  showBlinkCard();
+  startBlinkTimer();
+}
+
+function buildBlinkDeck(filter){
+  let pool;
+  if(filter==='seen') pool=KANJI.filter(k=>getKanjiStat(k.kanji).srsLevel>0);
+  else if(filter==='unseen') pool=KANJI.filter(k=>getKanjiStat(k.kanji).srsLevel===0);
+  else if(filter==='due') pool=KANJI.filter(k=>{const s=getKanjiStat(k.kanji);return s.srsLevel>0&&isDue(s);});
+  else pool=[...KANJI];
+  return shuffle([...pool]);
+}
+
+function showBlinkCard(){
+  const entry=blink.deck[blink.idx];
+  document.getElementById('blink-kanji').textContent=entry.kanji;
+  document.getElementById('blink-meaning').textContent=entry.meaning;
+  let rdg='';
+  if(entry.on.length) rdg+='<div><strong>ON:</strong> '+entry.on.join(', ')+'</div>';
+  if(entry.kun.length) rdg+='<div><strong>KUN:</strong> '+entry.kun.join(', ')+'</div>';
+  document.getElementById('blink-readings').innerHTML=rdg;
+  let voc='';
+  (entry.compounds||[]).slice(0,5).forEach(c=>{
+    voc+='<div><span class="bv-word">'+c.word+'</span> <span class="bv-reading">('+c.reading+')</span> <span class="bv-meaning">'+c.meaning+'</span></div>';
+  });
+  document.getElementById('blink-vocab').innerHTML=voc;
+  document.getElementById('blink-counter').textContent=(blink.idx+1)+' / '+blink.deck.length;
+  document.getElementById('blink-progress').style.width=((blink.idx+1)/blink.deck.length*100)+'%';
+}
+
+function startBlinkTimer(){
+  clearBlinkTimers();
+  if(blink.paused)return;
+  let elapsed=0;
+  const total=blink.speed*1000;
+  const bar=document.getElementById('blink-countdown');
+  bar.style.width='100%';
+  blink.countdown=setInterval(()=>{
+    elapsed+=50;
+    bar.style.width=(Math.max(0,100-elapsed/total*100))+'%';
+  },50);
+  blink.timer=setTimeout(()=>{blinkNext();},total);
+}
+
+function clearBlinkTimers(){
+  if(blink.timer){clearTimeout(blink.timer);blink.timer=null;}
+  if(blink.countdown){clearInterval(blink.countdown);blink.countdown=null;}
+}
+
+function blinkNext(){
+  clearBlinkTimers();
+  blink.idx=(blink.idx+1)%blink.deck.length;
+  showBlinkCard();
+  startBlinkTimer();
+}
+
+function blinkPrev(){
+  clearBlinkTimers();
+  blink.idx=(blink.idx-1+blink.deck.length)%blink.deck.length;
+  showBlinkCard();
+  startBlinkTimer();
+}
+
+function toggleBlinkPause(){
+  blink.paused=!blink.paused;
+  document.getElementById('blink-pause-btn').textContent=blink.paused?'\u25B6':'\u23F8';
+  if(blink.paused)clearBlinkTimers();
+  else startBlinkTimer();
+}
+
+function setBlinkSpeed(s){
+  blink.speed=s;
+  state.settings.blinkSpeed=s;
+  saveState();
+  updateBlinkSpeedButtons();
+  if(!blink.paused){clearBlinkTimers();startBlinkTimer();}
+}
+
+function updateBlinkSpeedButtons(){
+  [2,3,5].forEach(s=>{
+    const btn=document.getElementById('blink-sp-'+s);
+    if(btn)btn.className=s===blink.speed?'active':'';
+  });
+}
+
+function setBlinkFilter(filter){
+  blink.filter=filter;
+  blink.deck=buildBlinkDeck(filter);
+  if(blink.deck.length===0){alert('No kanji for this filter');return;}
+  blink.idx=0;
+  updateBlinkFilterButtons();
+  showBlinkCard();
+  if(!blink.paused){clearBlinkTimers();startBlinkTimer();}
+}
+
+function updateBlinkFilterButtons(){
+  ['all','seen','unseen','due'].forEach(f=>{
+    const btn=document.getElementById('blink-f-'+f);
+    if(btn)btn.className=f===blink.filter?'active':'';
+  });
+}
+
+function closeBlink(){
+  clearBlinkTimers();
+  document.getElementById('blink-overlay').classList.remove('show');
+}
+// end blink
+
 document.addEventListener('keydown',(e)=>{
+  if(document.getElementById('blink-overlay').classList.contains('show')){
+    if(e.key==='Escape')closeBlink();
+    else if(e.key===' '){e.preventDefault();toggleBlinkPause();}
+    else if(e.key==='ArrowRight')blinkNext();
+    else if(e.key==='ArrowLeft')blinkPrev();
+    return;
+  }
   if(document.getElementById('graduation-overlay').classList.contains('show')){if(e.key==='Escape')dismissGraduation();return;}
   if(document.getElementById('modal-overlay').classList.contains('show')){if(e.key==='Escape')closeModal();return;}
   if(document.getElementById('quiz-screen').style.display==='none')return;
@@ -2436,6 +2658,34 @@ document.addEventListener('keydown',(e)=>{
 // ── INIT ──
 startQuiz('mixed');
 </script>
+<div class="blink-overlay" id="blink-overlay">
+  <div class="blink-progress" id="blink-progress"></div>
+  <div class="blink-countdown" id="blink-countdown"></div>
+  <span class="blink-counter" id="blink-counter"></span>
+  <button class="blink-close" onclick="closeBlink()">&times;</button>
+  <div class="blink-body">
+    <div class="blink-left">
+      <div class="blink-kanji" id="blink-kanji"></div>
+      <div class="blink-meaning" id="blink-meaning"></div>
+    </div>
+    <div class="blink-right">
+      <div class="blink-readings" id="blink-readings"></div>
+      <div class="blink-vocab" id="blink-vocab"></div>
+    </div>
+  </div>
+  <div class="blink-controls">
+    <button onclick="setBlinkSpeed(2)" id="blink-sp-2">2s</button>
+    <button onclick="setBlinkSpeed(3)" id="blink-sp-3" class="active">3s</button>
+    <button onclick="setBlinkSpeed(5)" id="blink-sp-5">5s</button>
+    <span style="color:#ccc">|</span>
+    <button onclick="setBlinkFilter('all')" id="blink-f-all" class="active">All</button>
+    <button onclick="setBlinkFilter('seen')" id="blink-f-seen">Seen</button>
+    <button onclick="setBlinkFilter('unseen')" id="blink-f-unseen">Unseen</button>
+    <button onclick="setBlinkFilter('due')" id="blink-f-due">Due</button>
+    <span style="color:#ccc">|</span>
+    <button onclick="toggleBlinkPause()" id="blink-pause-btn">&#9208;</button>
+  </div>
+</div>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js")}</script>
 </body>
 </html>
