@@ -2345,6 +2345,128 @@ function updateStatsBar() {
 function getCurrentStreak(){if(!quiz)return 0;let s=0;for(let i=quiz.current-1;i>=0;i--){if(!quiz.mistakes.find(m=>m===quiz.questions[i]))s++;else break;}return s;}
 
 // ── KEYBOARD ──
+// --- Blink Mode ---
+let blink={deck:[],idx:0,timer:null,countdown:null,speed:3,paused:false,filter:'all'};
+
+function startBlink(filter){
+  blink.filter=filter||'all';
+  blink.speed=state.settings.blinkSpeed||3;
+  blink.paused=false;
+  blink.deck=buildBlinkDeck(blink.filter);
+  if(blink.deck.length===0){alert('No kanji for this filter');return;}
+  blink.idx=0;
+  document.getElementById('blink-overlay').classList.add('show');
+  updateBlinkSpeedButtons();
+  updateBlinkFilterButtons();
+  document.getElementById('blink-pause-btn').textContent='\u23F8';
+  showBlinkCard();
+  startBlinkTimer();
+}
+
+function buildBlinkDeck(filter){
+  let pool;
+  if(filter==='seen') pool=KANJI.filter(k=>getKanjiStat(k.kanji).srsLevel>0);
+  else if(filter==='unseen') pool=KANJI.filter(k=>getKanjiStat(k.kanji).srsLevel===0);
+  else if(filter==='due') pool=KANJI.filter(k=>{const s=getKanjiStat(k.kanji);return s.srsLevel>0&&isDue(s);});
+  else pool=[...KANJI];
+  return shuffle([...pool]);
+}
+
+function showBlinkCard(){
+  const entry=blink.deck[blink.idx];
+  document.getElementById('blink-kanji').textContent=entry.kanji;
+  document.getElementById('blink-meaning').textContent=entry.meaning;
+  let rdg='';
+  if(entry.on.length) rdg+='<div><strong>ON:</strong> '+entry.on.join(', ')+'</div>';
+  if(entry.kun.length) rdg+='<div><strong>KUN:</strong> '+entry.kun.join(', ')+'</div>';
+  document.getElementById('blink-readings').innerHTML=rdg;
+  let voc='';
+  (entry.compounds||[]).slice(0,5).forEach(c=>{
+    voc+='<div><span class="bv-word">'+c.word+'</span> <span class="bv-reading">('+c.reading+')</span> <span class="bv-meaning">'+c.meaning+'</span></div>';
+  });
+  document.getElementById('blink-vocab').innerHTML=voc;
+  document.getElementById('blink-counter').textContent=(blink.idx+1)+' / '+blink.deck.length;
+  document.getElementById('blink-progress').style.width=((blink.idx+1)/blink.deck.length*100)+'%';
+}
+
+function startBlinkTimer(){
+  clearBlinkTimers();
+  if(blink.paused)return;
+  let elapsed=0;
+  const total=blink.speed*1000;
+  const bar=document.getElementById('blink-countdown');
+  bar.style.width='100%';
+  blink.countdown=setInterval(()=>{
+    elapsed+=50;
+    bar.style.width=(Math.max(0,100-elapsed/total*100))+'%';
+  },50);
+  blink.timer=setTimeout(()=>{blinkNext();},total);
+}
+
+function clearBlinkTimers(){
+  if(blink.timer){clearTimeout(blink.timer);blink.timer=null;}
+  if(blink.countdown){clearInterval(blink.countdown);blink.countdown=null;}
+}
+
+function blinkNext(){
+  clearBlinkTimers();
+  blink.idx=(blink.idx+1)%blink.deck.length;
+  showBlinkCard();
+  startBlinkTimer();
+}
+
+function blinkPrev(){
+  clearBlinkTimers();
+  blink.idx=(blink.idx-1+blink.deck.length)%blink.deck.length;
+  showBlinkCard();
+  startBlinkTimer();
+}
+
+function toggleBlinkPause(){
+  blink.paused=!blink.paused;
+  document.getElementById('blink-pause-btn').textContent=blink.paused?'\u25B6':'\u23F8';
+  if(blink.paused)clearBlinkTimers();
+  else startBlinkTimer();
+}
+
+function setBlinkSpeed(s){
+  blink.speed=s;
+  state.settings.blinkSpeed=s;
+  saveState();
+  updateBlinkSpeedButtons();
+  if(!blink.paused){clearBlinkTimers();startBlinkTimer();}
+}
+
+function updateBlinkSpeedButtons(){
+  [2,3,5].forEach(s=>{
+    const btn=document.getElementById('blink-sp-'+s);
+    if(btn)btn.className=s===blink.speed?'active':'';
+  });
+}
+
+function setBlinkFilter(filter){
+  blink.filter=filter;
+  blink.deck=buildBlinkDeck(filter);
+  if(blink.deck.length===0){alert('No kanji for this filter');return;}
+  blink.idx=0;
+  updateBlinkFilterButtons();
+  showBlinkCard();
+  if(!blink.paused){clearBlinkTimers();startBlinkTimer();}
+}
+
+function updateBlinkFilterButtons(){
+  ['all','seen','unseen','due'].forEach(f=>{
+    const btn=document.getElementById('blink-f-'+f);
+    if(btn)btn.className=f===blink.filter?'active':'';
+  });
+}
+
+function closeBlink(){
+  clearBlinkTimers();
+  document.getElementById('blink-overlay').classList.remove('show');
+}
+// end blink
+
 document.addEventListener('keydown',(e)=>{
   if(document.getElementById('graduation-overlay').classList.contains('show')){if(e.key==='Escape')dismissGraduation();return;}
   if(document.getElementById('modal-overlay').classList.contains('show')){if(e.key==='Escape')closeModal();return;}
