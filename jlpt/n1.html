@@ -1198,11 +1198,11 @@
       <input type="text" id="review-search" placeholder="Search kanji, reading, or meaning..." oninput="searchReview(this.value)" style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:1rem;outline:none">
     </div>
     <div class="review-filters">
-      <button class="active" onclick="filterReview('all', this)">All (1232)</button>
-      <button onclick="filterReview('unseen', this)">Unseen</button>
-      <button onclick="filterReview('learning', this)">Learning</button>
-      <button onclick="filterReview('struggling', this)">Struggling</button>
-      <button onclick="filterReview('mastered', this)">Mastered</button>
+      <button class="active" id="rf-all" onclick="filterReview('all', this)">All (1232)</button>
+      <button id="rf-unseen" onclick="filterReview('unseen', this)">Unseen</button>
+      <button id="rf-learning" onclick="filterReview('learning', this)">Learning</button>
+      <button id="rf-struggling" onclick="filterReview('struggling', this)">Struggling</button>
+      <button id="rf-mastered" onclick="filterReview('mastered', this)">Mastered</button>
     </div>
     <div class="kanji-grid" id="kanji-grid"></div>
   </div>
@@ -3679,6 +3679,11 @@ function updateReviewAccuracy(){
     '<span><span class="dot" style="background:#d4a017"></span>Learning '+nLearning+'</span>'+
     '<span><span class="dot" style="background:var(--wrong)"></span>Struggling '+nStruggling+'</span>'+
     '<span><span class="dot" style="background:var(--correct)"></span>Mastered '+nMastered+'</span>';
+  document.getElementById('rf-all').textContent='All ('+T+')';
+  document.getElementById('rf-unseen').textContent='Unseen ('+nUnseen+')';
+  document.getElementById('rf-learning').textContent='Learning ('+nLearning+')';
+  document.getElementById('rf-struggling').textContent='Struggling ('+nStruggling+')';
+  document.getElementById('rf-mastered').textContent='Mastered ('+nMastered+')';
 }
 function filterReview(filter,btn){document.querySelectorAll('.review-filters button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('review-search').value='';renderReviewGrid(filter);}
 function openFlashcard(){
