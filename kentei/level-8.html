@@ -211,12 +211,12 @@
     color: var(--text);
     padding: 28px 20px;
     border-radius: 14px;
-    font-size: 2rem;
+    font-size: 2.8rem;
     font-family: 'Shippori Mincho B1', 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
-    min-height: 85px;
+    min-height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1198,11 +1198,11 @@
       <input type="text" id="review-search" placeholder="Search kanji, reading, or meaning..." oninput="searchReview(this.value)" style="flex:1;min-width:200px;padding:10px 16px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:1rem;outline:none">
     </div>
     <div class="review-filters">
-      <button class="active" id="rf-all" id="rf-all" onclick="filterReview('all', this)">All (200)</button>
-      <button id="rf-unseen" id="rf-unseen" onclick="filterReview('unseen', this)">Unseen</button>
-      <button id="rf-learning" id="rf-learning" onclick="filterReview('learning', this)">Learning</button>
-      <button id="rf-struggling" id="rf-struggling" onclick="filterReview('struggling', this)">Struggling</button>
-      <button id="rf-mastered" id="rf-mastered" onclick="filterReview('mastered', this)">Mastered</button>
+      <button class="active" id="rf-all" onclick="filterReview('all', this)">All (200)</button>
+      <button id="rf-unseen" onclick="filterReview('unseen', this)">Unseen</button>
+      <button id="rf-learning" onclick="filterReview('learning', this)">Learning</button>
+      <button id="rf-struggling" onclick="filterReview('struggling', this)">Struggling</button>
+      <button id="rf-mastered" onclick="filterReview('mastered', this)">Mastered</button>
     </div>
     <div class="kanji-grid" id="kanji-grid"></div>
   </div>
