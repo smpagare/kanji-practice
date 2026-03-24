@@ -967,7 +967,22 @@
     border-color: var(--gold);
     background: rgba(255,213,79,0.05);
   }
-  .achievement-badge.locked { opacity: 0.35; filter: grayscale(1); }
+  .achievement-badge.locked { opacity: 0.5; filter: grayscale(0.8); cursor: pointer; position: relative; overflow: hidden; }
+  .achievement-badge.locked:hover { opacity: 0.75; filter: grayscale(0.3); transform: scale(1.05); }
+  .achievement-badge.locked::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,213,79,0.15) 50%, transparent 60%);
+    animation: badge-shimmer 3s ease-in-out infinite;
+  }
+  @keyframes badge-shimmer {
+    0% { transform: translateX(-100%) rotate(0deg); }
+    100% { transform: translateX(100%) rotate(0deg); }
+  }
+  .achievement-badge .badge-hint { font-size: 0.55rem; color: var(--text-dim); margin-top: 3px; font-style: italic; opacity: 0; transition: opacity 0.2s; }
+  .achievement-badge.locked:hover .badge-hint { opacity: 1; }
   .achievement-badge .badge-icon { font-size: 2rem; margin-bottom: 6px; }
   .achievement-badge .badge-name { font-size: 0.7rem; color: var(--text); font-weight: 600; }
   .achievement-badge .badge-date { font-size: 0.6rem; color: var(--text-dim); margin-top: 2px; }
@@ -1399,7 +1414,7 @@ const KANJI = [
   { kanji:"持", on:["ジ"], kun:["も.つ"], meaning:"hold; have", compounds:[{word:"持つ",reading:"もつ",meaning:"to hold"},{word:"気持ち",reading:"きもち",meaning:"feeling"},{word:"持ち物",reading:"もちもの",meaning:"belongings"},{word:"持てる",reading:"もてる",meaning:"to be able to possess (hold, get, etc.)"},{word:"持",reading:"じ",meaning:"draw (in go, poetry contest, etc.)"}], antonym:null },
   { kanji:"野", on:["ヤ"], kun:["の"], meaning:"field; plain", compounds:[{word:"野菜",reading:"やさい",meaning:"vegetables"},{word:"野球",reading:"やきゅう",meaning:"baseball"},{word:"分野",reading:"ぶんや",meaning:"field (of study)"},{word:"野郎",reading:"やろう",meaning:"guy"},{word:"野",reading:"の",meaning:"plain"}], antonym:null },
   { kanji:"以", on:["イ"], kun:[], meaning:"by means of; compared with", compounds:[{word:"以上",reading:"いじょう",meaning:"more than"},{word:"以下",reading:"いか",meaning:"less than"},{word:"以外",reading:"いがい",meaning:"except for"},{word:"以前",reading:"いぜん",meaning:"before"},{word:"以来",reading:"いらい",meaning:"since"}], antonym:null },
-  { kanji:"思", on:["シ"], kun:["おも.う"], meaning:"think", compounds:[{word:"思う",reading:"おもう",meaning:"to think"},{word:"思い出",reading:"おもいで",meaning:"memory"},{word:"不思議",reading:"ふしぎ",meaning:"mystery"},{word:"思い",reading:"おも",meaning:"thought"},{word:"思い出す",reading:"おも出だ",meaning:"to recall"}], antonym:null },
+  { kanji:"思", on:["シ"], kun:["おも.う"], meaning:"think", compounds:[{word:"思う",reading:"おもう",meaning:"to think"},{word:"思い出",reading:"おもいで",meaning:"memory"},{word:"不思議",reading:"ふしぎ",meaning:"mystery"},{word:"思い",reading:"おも",meaning:"thought"},{word:"思い出す",reading:"おもだ",meaning:"to recall"}], antonym:null },
   { kanji:"家", on:["カ","ケ"], kun:["いえ","や","うち"], meaning:"house; family; specialist", compounds:[{word:"家",reading:"いえ",meaning:"house"},{word:"家族",reading:"かぞく",meaning:"family"},{word:"家庭",reading:"かてい",meaning:"household"},{word:"大家",reading:"おおや",meaning:"landlord"},{word:"国家",reading:"こっか",meaning:"state"}], antonym:null },
   { kanji:"世", on:["セイ","セ"], kun:["よ"], meaning:"world; generation", compounds:[{word:"世界",reading:"せかい",meaning:"world"},{word:"世話",reading:"せわ",meaning:"care; help"},{word:"世紀",reading:"せいき",meaning:"century"},{word:"世路",reading:"せいろ",meaning:"path of life"},{word:"世",reading:"よ",meaning:"world"}], antonym:null },
   { kanji:"多", on:["タ"], kun:["おお.い"], meaning:"many; much", compounds:[{word:"多い",reading:"おおい",meaning:"many"},{word:"多分",reading:"たぶん",meaning:"probably"},{word:"多数",reading:"たすう",meaning:"majority"},{word:"多",reading:"た",meaning:"multi-"},{word:"多く",reading:"おお",meaning:"many"}], antonym:"少" },
@@ -1463,7 +1478,7 @@ const KANJI = [
   { kanji:"族", on:["ゾク"], kun:[], meaning:"tribe; family", compounds:[{word:"家族",reading:"かぞく",meaning:"family"},{word:"民族",reading:"みんぞく",meaning:"ethnic group"},{word:"水族館",reading:"すいぞくかん",meaning:"aquarium"},{word:"一族",reading:"いちぞく",meaning:"family"},{word:"族",reading:"ぞく",meaning:"tribe"}], antonym:null },
   { kanji:"銀", on:["ギン"], kun:[], meaning:"silver", compounds:[{word:"銀行",reading:"ぎんこう",meaning:"bank"},{word:"銀色",reading:"ぎんいろ",meaning:"silver color"},{word:"銀メダル",reading:"ぎんメダル",meaning:"silver medal"},{word:"銀",reading:"ぎん",meaning:"silver (Ag)"},{word:"銀河",reading:"ぎんが",meaning:"Milky Way"}], antonym:null },
   { kanji:"早", on:["ソウ","サッ"], kun:["はや.い","はや.まる"], meaning:"early; fast", compounds:[{word:"早い",reading:"はやい",meaning:"early"},{word:"早朝",reading:"そうちょう",meaning:"early morning"},{word:"早速",reading:"さっそく",meaning:"at once"},{word:"早",reading:"はや",meaning:"already"},{word:"一刻も早く",reading:"いっこくもはやく",meaning:"immediately"}], antonym:"遅" },
-  { kanji:"映", on:["エイ"], kun:["うつ.る","うつ.す","は.える"], meaning:"reflect; project", compounds:[{word:"映画",reading:"えいが",meaning:"movie"},{word:"映る",reading:"うつる",meaning:"to be reflected"},{word:"映像",reading:"えいぞう",meaning:"image; video"},{word:"映す",reading:"うつ",meaning:"to project"},{word:"映し出す",reading:"うつ出だ",meaning:"to project"}], antonym:null },
+  { kanji:"映", on:["エイ"], kun:["うつ.る","うつ.す","は.える"], meaning:"reflect; project", compounds:[{word:"映画",reading:"えいが",meaning:"movie"},{word:"映る",reading:"うつる",meaning:"to be reflected"},{word:"映像",reading:"えいぞう",meaning:"image; video"},{word:"映す",reading:"うつ",meaning:"to project"},{word:"映し出す",reading:"うつだ",meaning:"to project"}], antonym:null },
   { kanji:"親", on:["シン"], kun:["おや","した.しい"], meaning:"parent; familiar", compounds:[{word:"親",reading:"おや",meaning:"parent"},{word:"親切",reading:"しんせつ",meaning:"kind"},{word:"両親",reading:"りょうしん",meaning:"parents"},{word:"父親",reading:"ちちおや",meaning:"father"},{word:"母親",reading:"ははおや",meaning:"mother"}], antonym:null },
   { kanji:"験", on:["ケン","ゲン"], kun:[], meaning:"test; effect", compounds:[{word:"試験",reading:"しけん",meaning:"exam"},{word:"経験",reading:"けいけん",meaning:"experience"},{word:"実験",reading:"じっけん",meaning:"experiment"},{word:"体験",reading:"たいけん",meaning:"(practical) experience"},{word:"受験",reading:"じゅけん",meaning:"taking an examination (esp. for entrance to a scho"}], antonym:null },
   { kanji:"英", on:["エイ"], kun:[], meaning:"England; excellent", compounds:[{word:"英語",reading:"えいご",meaning:"English"},{word:"英文",reading:"えいぶん",meaning:"English text"},{word:"英雄",reading:"えいゆう",meaning:"hero"},{word:"英",reading:"えい",meaning:"United Kingdom"},{word:"英国",reading:"えいこく",meaning:"United Kingdom"}], antonym:null },
@@ -1491,7 +1506,7 @@ const KANJI = [
   { kanji:"黒", on:["コク"], kun:["くろ","くろ.い"], meaning:"black", compounds:[{word:"黒い",reading:"くろい",meaning:"black"},{word:"黒板",reading:"こくばん",meaning:"blackboard"},{word:"黒人",reading:"こくじん",meaning:"Black person"},{word:"黒",reading:"くろ",meaning:"black"},{word:"暗黒",reading:"あんこく",meaning:"darkness"}], antonym:"白" },
   { kanji:"花", on:["カ"], kun:["はな"], meaning:"flower", compounds:[{word:"花",reading:"はな",meaning:"flower"},{word:"花見",reading:"はなみ",meaning:"flower viewing"},{word:"花火",reading:"はなび",meaning:"fireworks"},{word:"花道",reading:"はなみち",meaning:"elevated walkway through the audience to the stage"},{word:"六花",reading:"りっか",meaning:"snow"}], antonym:null },
   { kanji:"春", on:["シュン"], kun:["はる"], meaning:"spring", compounds:[{word:"春",reading:"はる",meaning:"spring"},{word:"春休み",reading:"はるやすみ",meaning:"spring break"},{word:"青春",reading:"せいしゅん",meaning:"youth"},{word:"初春",reading:"しょしゅん",meaning:"early spring"},{word:"春日",reading:"しゅんじつ",meaning:"spring day"}], antonym:"秋" },
-  { kanji:"赤", on:["セキ","シャク"], kun:["あか","あか.い"], meaning:"red", compounds:[{word:"赤い",reading:"あかい",meaning:"red"},{word:"赤ちゃん",reading:"あかちゃん",meaning:"baby"},{word:"赤字",reading:"あかじ",meaning:"deficit"},{word:"赤",reading:"あか",meaning:"red"},{word:"赤ん坊",reading:"あか坊ぼう",meaning:"baby"}], antonym:"青" },
+  { kanji:"赤", on:["セキ","シャク"], kun:["あか","あか.い"], meaning:"red", compounds:[{word:"赤い",reading:"あかい",meaning:"red"},{word:"赤ちゃん",reading:"あかちゃん",meaning:"baby"},{word:"赤字",reading:"あかじ",meaning:"deficit"},{word:"赤",reading:"あか",meaning:"red"},{word:"赤ん坊",reading:"あかぼう",meaning:"baby"}], antonym:"青" },
   { kanji:"青", on:["セイ","ショウ"], kun:["あお","あお.い"], meaning:"blue; green; young", compounds:[{word:"青い",reading:"あおい",meaning:"blue"},{word:"青年",reading:"せいねん",meaning:"youth"},{word:"青春",reading:"せいしゅん",meaning:"youth"},{word:"青",reading:"あお",meaning:"blue"},{word:"青山",reading:"せいざん",meaning:"lush mountain"}], antonym:"赤" },
   { kanji:"館", on:["カン"], kun:["やかた"], meaning:"building; hall", compounds:[{word:"図書館",reading:"としょかん",meaning:"library"},{word:"映画館",reading:"えいがかん",meaning:"movie theater"},{word:"大使館",reading:"たいしかん",meaning:"embassy"},{word:"館",reading:"やかた",meaning:"mansion"},{word:"旅館",reading:"りょかん",meaning:"ryokan"}], antonym:null },
   { kanji:"屋", on:["オク"], kun:["や"], meaning:"shop; roof; house", compounds:[{word:"部屋",reading:"へや",meaning:"room"},{word:"本屋",reading:"ほんや",meaning:"bookstore"},{word:"屋上",reading:"おくじょう",meaning:"rooftop"},{word:"屋",reading:"や",meaning:"shop"},{word:"屋敷",reading:"やしき",meaning:"residence"}], antonym:null },
@@ -1735,9 +1750,9 @@ function renderAchievements() {
     ACHIEVEMENTS.map(a => {
       const earned = state.achievements.unlocked[a.id];
       return `<div class="achievement-badge ${earned ? 'earned' : 'locked'}" title="${a.desc}">
-        <div class="badge-icon">${a.icon}</div>
+        <div class="badge-icon">${earned ? a.icon : '\ud83d\udd12'}</div>
         <div class="badge-name">${a.name}</div>
-        ${earned ? '<div class="badge-date">' + new Date(earned).toLocaleDateString() + '</div>' : ''}
+        ${earned ? '<div class="badge-date">' + new Date(earned).toLocaleDateString() + '</div>' : '<div class="badge-hint">' + a.desc + '</div>'}
       </div>`;
     }).join('') + '</div>';
 }
