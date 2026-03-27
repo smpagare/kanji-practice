@@ -149,6 +149,62 @@
 
   .footer { text-align: center; padding: 24px; color: var(--text-dim); font-size: 0.75rem; letter-spacing: 1px; opacity: 0.6; }
 
+  /* ── HOW TO USE ── */
+  .guide-section {
+    max-width: 900px; margin: 48px auto 0; padding: 0 24px;
+  }
+  .guide-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 36px 40px; margin-bottom: 24px;
+  }
+  .guide-card h2 {
+    font-size: 1.5rem; margin-bottom: 20px; color: var(--accent); letter-spacing: 1px;
+  }
+  .guide-steps {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .guide-step {
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: #fff; display: flex; align-items: center;
+    justify-content: center; font-size: 0.85rem; font-weight: 700;
+  }
+  .step-text { font-size: 0.95rem; line-height: 1.6; color: var(--text-dim); }
+  .step-text strong { color: var(--text); }
+
+  .srs-legend {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; justify-content: center;
+  }
+  .srs-dot {
+    display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-dim);
+  }
+  .srs-dot span {
+    width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+  }
+
+  .quote-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 40px; text-align: center; margin-bottom: 32px; position: relative;
+  }
+  .quote-card .quote-mark {
+    font-size: 4rem; color: var(--accent); opacity: 0.3; line-height: 1; position: absolute;
+    top: 16px; left: 24px;
+  }
+  .quote-card blockquote {
+    font-size: 1.3rem; font-style: italic; line-height: 1.8; color: var(--text);
+    margin: 0; padding: 0 20px;
+  }
+  .quote-card .quote-author {
+    margin-top: 16px; font-size: 0.9rem; color: var(--text-dim); font-style: normal;
+  }
+
+  @media (max-width: 700px) {
+    .guide-steps { grid-template-columns: 1fr; }
+    .guide-card { padding: 24px; }
+  }
+
   @media (max-width: 700px) {
     .hero h1 { font-size: 2.6rem; }
     .hero-bg-kanji { font-size: 14rem; }
@@ -325,7 +381,59 @@
   </div>
 </main>
 
-<div class="footer">漢字 Practice</div>
+<div class="guide-section">
+
+  <div class="quote-card">
+    <div class="quote-mark">"</div>
+    <blockquote>
+      A thousand-mile journey begins with the first stroke.<br>
+      Every kanji you learn is a window into a civilization's mind.
+    </blockquote>
+    <div class="quote-author">-- 千里の道も一歩から (senri no michi mo ippo kara)</div>
+  </div>
+
+  <div class="guide-card">
+    <h2>How to Use</h2>
+    <div class="guide-steps">
+      <div class="guide-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Pick a level</strong> -- start with N5 or 10級 if you're new. Each level teaches you kanji through spaced repetition.</div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Quiz mode</strong> -- answer reading, meaning, and compound questions. Get a kanji right and it advances through SRS levels.</div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Watch the colors shift</strong> -- kanji start gray (unseen), turn red (apprentice), orange, gold, then green (mastered) as you learn.</div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Come back when due</strong> -- the SRS system schedules reviews at increasing intervals: 4hr, 1d, 3d, 1w, 2w. Due kanji glow for attention.</div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">5</div>
+        <div class="step-text"><strong>Use Blink mode</strong> -- rapid full-screen flashcards that auto-advance. Perfect for quick review sessions on the go.</div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">6</div>
+        <div class="step-text"><strong>Unlock post-mastery</strong> -- master all kanji in a level to unlock Confusion Pairs, Compound Mastery, and Sentence Context challenges.</div>
+      </div>
+    </div>
+
+    <div class="srs-legend" style="margin-top:28px">
+      <div class="srs-dot"><span style="background:#c0c0cc"></span> New</div>
+      <div class="srs-dot"><span style="background:#e05545"></span> Apprentice (4hr)</div>
+      <div class="srs-dot"><span style="background:#e08a3a"></span> Familiar (1d)</div>
+      <div class="srs-dot"><span style="background:#d4a017"></span> Practiced (3d)</div>
+      <div class="srs-dot"><span style="background:#7ab648"></span> Strong (1w)</div>
+      <div class="srs-dot"><span style="background:#1a9f55"></span> Mastered (2w)</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">漢字 Practice -- Built for learners who refuse to forget.</div>
 
 <script>
 const SRS_INTERVALS = [0, 4*3600000, 86400000, 3*86400000, 7*86400000, 14*86400000];
