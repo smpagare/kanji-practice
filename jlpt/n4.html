@@ -1238,6 +1238,7 @@
       <button class="custom-filter" onclick="filterCustom('learning', this)">Learning</button>
       <button class="custom-filter" onclick="filterCustom('struggling', this)">Struggling</button>
       <button class="custom-filter" onclick="filterCustom('mastered', this)">Mastered</button>
+      <button class="custom-filter" onclick="filterCustom('due', this)">Due</button>
     </div>
     <div class="custom-grid-wrap">
       <div class="col-select-row" id="col-select-row"></div>
@@ -2041,7 +2042,7 @@ function renderCustomGrid(filter) {
   customFilter = filter || 'all';
   const grid = document.getElementById('custom-grid');
   let entries = KANJI;
-  if (customFilter !== 'all') {
+  if (customFilter === 'due') { entries = KANJI.filter(k => { const s = getKanjiStat(k.kanji); return s.srsLevel > 0 && isDue(s); }); } else if (customFilter !== 'all') {
     entries = KANJI.filter(k => getKanjiStatus(k.kanji) === customFilter);
   }
   // Build tiles
@@ -2159,7 +2160,7 @@ function toggleCustomKanji(kanji) {
 
 function selectAllCustom() {
   let entries = KANJI;
-  if (customFilter !== 'all') {
+  if (customFilter === 'due') { entries = KANJI.filter(k => { const s = getKanjiStat(k.kanji); return s.srsLevel > 0 && isDue(s); }); } else if (customFilter !== 'all') {
     entries = KANJI.filter(k => getKanjiStatus(k.kanji) === customFilter);
   }
   entries.forEach(k => {
