@@ -2000,7 +2000,9 @@ function renderCustomGrid(filter) {
     const color = getProgressColor(stat);
     const cls = status === 'unseen' ? ' unseen' : '';
     const sel = state.customSelection.includes(k.kanji) ? ' selected' : '';
-    return `<div class="kanji-tile${sel}" onclick="toggleCustomKanji('${k.kanji}')">
+    const lv = stat.srsLevel || 0;
+    const due = lv > 0 && isDue(stat);
+    return `<div class="kanji-tile${sel}" onclick="toggleCustomKanji('${k.kanji}')" ${due?'style="box-shadow:0 0 0 2px '+color+'"':''}>
       <div class="tile-kanji${cls}" style="${cls ? '' : 'color:'+color}">${k.kanji}</div>
       <div class="tile-reading">${reading}</div>
     </div>`;
