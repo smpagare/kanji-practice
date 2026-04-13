@@ -256,8 +256,8 @@
   <!-- JLPT -->
   <div class="section-label">JLPT - 日本語能力試験</div>
   <div class="levels">
-    <a href="jlpt/n5.html" class="level-link" data-key="jlpt_n5" data-count="79">
-      <div class="level-top"><div class="level-name">N5</div><div class="level-badge">79 漢字</div></div>
+    <a href="jlpt/n5.html" class="level-link" data-key="jlpt_n5" data-count="81">
+      <div class="level-top"><div class="level-name">N5</div><div class="level-badge">81 漢字</div></div>
       <div class="level-desc">Beginner</div>
       <div class="srs-bar"></div>
       <div class="level-stats"><span class="mastery-count"></span><span class="mastery-pct"></span></div>
@@ -454,13 +454,14 @@ function updateThemeBtn(){
 updateThemeBtn();
 
 function loadProgress() {
-  let totalKanji = 0, totalMastered = 0, totalSeen = 0, totalDue = 0;
+  const totalKanji = 6353; // unique kanji across all levels (deduplicated)
+  let totalMastered = 0, totalSeen = 0, totalDue = 0;
   const now = Date.now();
 
   document.querySelectorAll('.level-link[data-key]').forEach(card => {
     const key = card.getAttribute('data-key');
     const count = parseInt(card.getAttribute('data-count'));
-    totalKanji += count;
+    // count used for per-level stats only; total is unique kanji constant above
     const raw = localStorage.getItem(key);
     if (!raw) return;
 

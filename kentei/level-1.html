@@ -200,8 +200,8 @@
 
   .options {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    grid-template-columns: 1fr;
+    gap: 10px;
     flex: 0.8;
     align-content: center;
   }
@@ -209,14 +209,14 @@
     background: var(--surface);
     border: 2px solid var(--border);
     color: var(--text);
-    padding: 28px 20px;
+    padding: 18px 20px;
     border-radius: 14px;
     font-size: 4.2rem;
     font-family: 'Shippori Mincho B1', 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
-    min-height: 130px;
+    min-height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -435,7 +435,7 @@
   .modal-body { padding: 28px 36px 32px; }
   .modal-readings {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 16px;
     margin-bottom: 24px;
   }
@@ -622,7 +622,7 @@
     .question-card { min-height: auto; padding: 28px 20px; }
     .question-kanji { font-size: 6rem; }
     .question-context { font-size: 3.8rem; }
-    .options { grid-template-columns: 1fr 1fr; }
+    .options { grid-template-columns: 1fr; }
     .option-btn { font-size: 1.4rem; padding: 16px 12px; min-height: auto; }
     .kanji-grid { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
     nav { padding: 12px 16px; }
@@ -714,7 +714,7 @@
     font-weight: 600;
   }
   .teach-kanji {
-    font-size: 14rem;
+    font-size: 10rem;
     line-height: 1.1;
     margin: 8px 0;
     font-family: 'Shippori Mincho B1', 'Noto Serif JP', serif;
@@ -773,7 +773,7 @@
   .teach-go-btn:hover { background: #5a52e0; }
   @media (max-width: 800px) {
     .teach-body { flex-direction: column; gap: 20px; }
-    .teach-kanji { font-size: 6rem; }
+    .teach-kanji { font-size: 5rem; }
     .teach-left { min-width: auto; }
     .feedback-2col { grid-template-columns: 1fr !important; }
   }
@@ -1030,7 +1030,7 @@
   .blink-body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     align-items: center;
     padding: 40px 24px 0;
     overflow-y: auto;
@@ -5797,7 +5797,7 @@ function startSentenceQuiz() {
       context: '<span class="highlight">' + comp.word + '</span>',
       sub: comp.meaning,
       answer: getKanjiReadingInCompound(entry, comp),
-      options: shuffle([getKanjiReadingInCompound(entry, comp), ...getDistractorReadings(entry, 5)]),
+      options: shuffle([getKanjiReadingInCompound(entry, comp), ...getDistractorReadings(entry,3)]),
       entry,
       needsTeach: false,
       feedbackRight: 'Correct! ' + comp.word + '（' + comp.reading + '）= ' + comp.meaning + _fullInfoHtml(entry, comp.word),
@@ -5812,7 +5812,7 @@ function startSentenceQuiz() {
       context: '<span class="highlight">' + comp2.word + '</span>',
       sub: comp2.meaning,
       answer: comp2.reading,
-      options: shuffle([comp2.reading, ...getDistractorCompoundReadings(comp2, entry, 5)]),
+      options: shuffle([comp2.reading, ...getDistractorCompoundReadings(comp2,entry,3)]),
       entry,
       needsTeach: false,
       feedbackRight: 'Correct! ' + comp2.word + '（' + comp2.reading + '）= ' + comp2.meaning + _fullInfoHtml(entry, comp2.word),
@@ -5852,7 +5852,7 @@ function startCompoundMasteryQuiz() {
         prompt: 'この熟語の読みは？',
         display: '', context: comp.word, sub: '',
         answer: comp.reading,
-        options: shuffle([comp.reading, ...getDistractorCompoundReadings(comp, entry, 5)]),
+        options: shuffle([comp.reading, ...getDistractorCompoundReadings(comp,entry,3)]),
         entry, needsTeach: false,
         feedbackRight: 'Correct! ' + comp.word + '（' + comp.reading + '）= ' + comp.meaning + _fullInfoHtml(entry, comp.word),
         feedbackWrong: comp.word + ' is read as: <strong style="font-size:1.3rem">' + comp.reading + '</strong> (' + comp.meaning + ')' + _fullInfoHtml(entry, comp.word)
@@ -5909,7 +5909,7 @@ function startConfusionQuiz() {
           type: 'confusion', prompt: 'この漢字の意味は？ (Look carefully!)',
           display: entry.kanji, context: '', sub: 'Confusion pair: ' + pair.group.join(' / '),
           answer: correctMeaning,
-          options: shuffle([correctMeaning, ...confusionMeanings, ...otherDistractors].slice(0, 6)),
+          options: shuffle([correctMeaning, ...confusionMeanings, ...otherDistractors].slice(0,4)),
           entry, needsTeach: false,
           feedbackRight: 'Correct! You can tell ' + pair.group.join(' / ') + ' apart!' + _fullInfoHtml(entry),
           feedbackWrong: entry.kanji + ' means <strong style="font-size:1.3rem">"' + entry.meaning + '"</strong>. Don\'t confuse with: ' +
@@ -5924,7 +5924,7 @@ function startConfusionQuiz() {
           type: 'confusion', prompt: 'この漢字の読みは？ (Look carefully!)',
           display: entry.kanji, context: '', sub: 'Confusion pair: ' + pair.group.join(' / '),
           answer: answer,
-          options: shuffle([answer, ...confusionReadings.slice(0, 3), ...otherDistractors].slice(0, 6)),
+          options: shuffle([answer, ...confusionReadings.slice(0, 3), ...otherDistractors].slice(0,4)),
           entry, needsTeach: false,
           feedbackRight: 'Correct! ' + entry.kanji + ' = ' + allReadings.join('、') + _fullInfoHtml(entry),
           feedbackWrong: entry.kanji + ' is read as <strong style="font-size:1.3rem">' + allReadings.join('、') + '</strong>. Don\'t confuse with: ' +
@@ -6239,7 +6239,7 @@ function genReadingQ(entry) {
   // "What is the reading of this kanji?"
   const allReadings = [...entry.on, ...entry.kun.map(r => r.replace(/\..*/,''))];
   const answer = allReadings[0];
-  const distractors = getDistractorReadings(entry, 5);
+  const distractors = getDistractorReadings(entry,3);
   return {
     type: 'reading',
     prompt: 'この漢字の読みは？',
@@ -6256,7 +6256,7 @@ function genReadingQ(entry) {
 
 function genMeaningQ(entry) {
   const answer = entry.meaning;
-  const distractors = getDistractorMeanings(entry, 5);
+  const distractors = getDistractorMeanings(entry,3);
   return {
     type: 'meaning',
     prompt: 'この漢字の意味は？ (What does this kanji mean?)',
@@ -6275,7 +6275,7 @@ function genKanjiQ(entry) {
   // given reading + meaning, pick the kanji
   const reading = entry.kun.length > 0 ? entry.kun[0].replace(/\..*/,'') : entry.on[0];
   const answer = entry.kanji;
-  const distractors = getDistractorKanji(entry, 5);
+  const distractors = getDistractorKanji(entry,3);
   return {
     type: 'kanji',
     prompt: `「${reading}」（${entry.meaning}）の漢字は？`,
@@ -6294,7 +6294,7 @@ function genCompoundQ(entry) {
   if (!entry.compounds || entry.compounds.length === 0) return genReadingQ(entry);
   const comp = entry.compounds[Math.floor(Math.random()*entry.compounds.length)];
   const answer = comp.reading;
-  const distractors = getDistractorCompoundReadings(comp, entry, 5);
+  const distractors = getDistractorCompoundReadings(comp,entry,3);
   return {
     type: 'compound',
     prompt: 'この言葉の読みは？ (How do you read this word?)',
@@ -6314,7 +6314,7 @@ function genAntonymQ(entry) {
   const antonymEntry = KANJI.find(k => k.kanji === entry.antonym);
   if (!antonymEntry) return genMeaningQ(entry);
   const answer = entry.antonym;
-  const distractors = getDistractorKanji(antonymEntry, 5).filter(d => d !== entry.kanji);
+  const distractors = getDistractorKanji(antonymEntry,3).filter(d => d !== entry.kanji);
   while(distractors.length < 5) {
     const r = KANJI[Math.floor(Math.random()*KANJI.length)].kanji;
     if (r !== answer && r !== entry.kanji && !distractors.includes(r)) distractors.push(r);
@@ -6326,7 +6326,7 @@ function genAntonymQ(entry) {
     context: '',
     sub: entry.meaning + ' → opposite?',
     answer,
-    options: shuffle([answer, ...distractors.slice(0,5)]),
+    options: shuffle([answer, ...distractors.slice(0,3)]),
     entry: antonymEntry,
     feedbackRight: `Correct! ${entry.kanji} (${entry.meaning}) ↔ ${antonymEntry.kanji} (${antonymEntry.meaning})`,
     feedbackWrong: `The opposite of <span class="kanji-big">${entry.kanji}</span> (${entry.meaning}) is <span class="kanji-big">${antonymEntry.kanji}</span> (${antonymEntry.meaning})`,
@@ -6335,7 +6335,7 @@ function genAntonymQ(entry) {
 function genEngToKanjiQ(entry) {
   const answer = entry.kanji;
   const allReadings = [...entry.on, ...entry.kun];
-  return { type:'eng_to_kanji', prompt:`Which kanji means "${entry.meaning}"?`, display:'', context:entry.meaning, sub:'Select the correct kanji', answer, options:shuffle([answer, ...getDistractorKanji(entry,5)]), entry, feedbackRight:'Correct!'+_fullInfoHtml(entry), feedbackWrong:'The correct kanji is: <strong style="font-size:1.3rem">'+entry.kanji+'</strong>'+_fullInfoHtml(entry) };
+  return { type:'eng_to_kanji', prompt:`Which kanji means "${entry.meaning}"?`, display:'', context:entry.meaning, sub:'Select the correct kanji', answer, options:shuffle([answer, ...getDistractorKanji(entry,3)]), entry, feedbackRight:'Correct!'+_fullInfoHtml(entry), feedbackWrong:'The correct kanji is: <strong style="font-size:1.3rem">'+entry.kanji+'</strong>'+_fullInfoHtml(entry) };
 }
 
 // ── Distractor helpers ──
