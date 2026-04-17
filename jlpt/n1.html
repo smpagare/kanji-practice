@@ -3455,7 +3455,7 @@ function applyFontScale(){
   const q=document.getElementById('quiz-screen');
   if(q){
     q.querySelectorAll('.question-kanji').forEach(e=>e.style.fontSize=(10*r)+'rem');
-    q.querySelectorAll('.question-context').forEach(e=>e.style.fontSize=(10*r)+'rem');
+    q.querySelectorAll('.question-context').forEach(e=>{var isJp=/[\u3000-\u9fff\uf900-\ufaff]/.test(e.textContent);e.style.fontSize=(isJp?(10*r):(1.8*r))+'rem';});
     q.querySelectorAll('.question-prompt').forEach(e=>e.style.fontSize=(1.15*r)+'rem');
     q.querySelectorAll('.question-sub').forEach(e=>e.style.fontSize=(1.3*r)+'rem');
     q.querySelectorAll('.option-btn').forEach(e=>e.style.fontSize=(2*r)+'rem');
@@ -3528,6 +3528,7 @@ function renderQuestionContent(q) {
   document.getElementById('question-kanji').style.display=q.display?'block':'none';
   document.getElementById('question-context').innerHTML=q.context||'';
   document.getElementById('question-context').style.display=q.context?'block':'none';
+  var _ctx=document.getElementById('question-context');if(q.context&&!/[\u3000-\u9fff\uf900-\ufaff]/.test(q.context)){_ctx.style.fontSize='1.8rem';}else{_ctx.style.fontSize='';}
   document.getElementById('question-sub').textContent=q.sub||'';
   document.getElementById('options').innerHTML=q.options.map((opt,i)=>`<button class="option-btn" onclick="answer(${i})" data-idx="${i}"><span class="key-hint">${i+1}</span>${opt}</button>`).join('');
   document.getElementById('feedback-card').className='feedback-card';

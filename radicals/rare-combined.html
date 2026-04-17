@@ -235,6 +235,7 @@ function renderQuestion(){
   document.getElementById('question-kanji').style.display=q.display?'block':'none';
   document.getElementById('question-context').innerHTML=q.context||'';
   document.getElementById('question-context').style.display=q.context?'block':'none';
+  var _ctx=document.getElementById('question-context');if(q.context&&!/[\u3000-\u9fff\uf900-\ufaff]/.test(q.context)){_ctx.style.fontSize='1.8rem';}else{_ctx.style.fontSize='';}
   document.getElementById('question-sub').textContent=q.sub||'';
   document.getElementById('options').innerHTML=q.options.map((o,i)=>'<button class="option-btn" onclick="answer('+i+')"><span class="key-hint">'+(i+1)+'</span>'+o+'</button>').join('');
   document.getElementById('feedback-card').className='feedback-card';
