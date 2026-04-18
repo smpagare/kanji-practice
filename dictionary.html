@@ -431,8 +431,8 @@ function doSearch() {
       return (code >= 0x4E00 && code <= 0x9FFF) || (code >= 0x3400 && code <= 0x4DBF) || (code >= 0xF900 && code <= 0xFAFF);
     });
 
-    // If input contains 2+ kanji chars, show all matching kanji from the text
-    if (kanjiInQuery.length >= 2) {
+    // If input contains any kanji chars, show all matching kanji from the text
+    if (kanjiInQuery.length >= 1) {
       const kanjiSet = new Set(kanjiInQuery);
       results = results.filter(k => kanjiSet.has(k.kanji));
     } else {
