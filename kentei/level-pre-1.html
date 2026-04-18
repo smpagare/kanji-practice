@@ -3156,7 +3156,7 @@ function applyFontScale(){
   const q=document.getElementById('quiz-screen');
   if(q){
     q.querySelectorAll('.question-kanji').forEach(e=>e.style.fontSize=(10*r)+'rem');
-    q.querySelectorAll('.question-context').forEach(e=>{var isJp=/[\u3000-\u9fff\uf900-\ufaff]/.test(e.textContent);e.style.fontSize=(isJp?(10*r):(1.8*r))+'rem';});
+    q.querySelectorAll('.question-context').forEach(e=>{var isJp=/[\u3000-\u9fff\uf900-\ufaff]/.test(e.textContent);e.style.fontSize=(isJp?(10*r):(3*r))+'rem';});
     q.querySelectorAll('.question-prompt').forEach(e=>e.style.fontSize=(1.15*r)+'rem');
     q.querySelectorAll('.question-sub').forEach(e=>e.style.fontSize=(1.3*r)+'rem');
     q.querySelectorAll('.option-btn').forEach(e=>e.style.fontSize=(2*r)+'rem');
